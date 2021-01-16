@@ -15,17 +15,16 @@
  */
 
 struct biquad {
-	float a0, a1, a2;       /* zero coefficients */
-	float b1, b2;           /* pole coefficients */
-	float d1, d2;           /* delay variables */
+	float a0, a1, a2;	/* zero coefficients */
+	float b1, b2;		/* pole coefficients */
+	float d1, d2;		/* delay variables */
 };
 
 /******************************************************************************
  * module port functions
  */
 
-static void biquad_port_cutoff(struct module *m, const struct event *e)
-{
+static void biquad_port_cutoff(struct module *m, const struct event *e) {
 	// struct biquad *this = (struct biquad *)m->priv;
 	float cutoff = clampf(event_get_float(e), 0.f, 0.5f * AudioSampleFrequency);
 
@@ -33,8 +32,7 @@ static void biquad_port_cutoff(struct module *m, const struct event *e)
 	/* TODO */
 }
 
-static void biquad_port_resonance(struct module *m, const struct event *e)
-{
+static void biquad_port_resonance(struct module *m, const struct event *e) {
 	// struct biquad *this = (struct biquad *)m->priv;
 	float resonance = clampf(event_get_float(e), 0.f, 1.f);
 
@@ -46,8 +44,7 @@ static void biquad_port_resonance(struct module *m, const struct event *e)
  * module functions
  */
 
-static int biquad_alloc(struct module *m, va_list vargs)
-{
+static int biquad_alloc(struct module *m, va_list vargs) {
 	/* allocate the private data */
 	struct biquad *this = ggm_calloc(1, sizeof(struct biquad));
 
@@ -59,15 +56,13 @@ static int biquad_alloc(struct module *m, va_list vargs)
 	return 0;
 }
 
-static void biquad_free(struct module *m)
-{
+static void biquad_free(struct module *m) {
 	struct biquad *this = (struct biquad *)m->priv;
 
 	ggm_free(this);
 }
 
-static bool biquad_process(struct module *m, float *bufs[])
-{
+static bool biquad_process(struct module *m, float *bufs[]) {
 	struct biquad *this = (struct biquad *)m->priv;
 	float *in = bufs[0];
 	float *out = bufs[1];
@@ -99,14 +94,14 @@ static bool biquad_process(struct module *m, float *bufs[])
  */
 
 static const struct port_info in_ports[] = {
-	{ .name = "in", .type = PORT_TYPE_AUDIO, },
-	{ .name = "cutoff", .type = PORT_TYPE_FLOAT, .pf = biquad_port_cutoff },
-	{ .name = "resonance", .type = PORT_TYPE_FLOAT, .pf = biquad_port_resonance },
+	{.name = "in",.type = PORT_TYPE_AUDIO,},
+	{.name = "cutoff",.type = PORT_TYPE_FLOAT,.pf = biquad_port_cutoff},
+	{.name = "resonance",.type = PORT_TYPE_FLOAT,.pf = biquad_port_resonance},
 	PORT_EOL,
 };
 
 static const struct port_info out_ports[] = {
-	{ .name = "out", .type = PORT_TYPE_AUDIO, },
+	{.name = "out",.type = PORT_TYPE_AUDIO,},
 	PORT_EOL,
 };
 

@@ -21,13 +21,13 @@
  */
 
 struct plot {
-	struct plot_cfg *cfg;   /* plot configuration */
-	uint32_t x;             /* current x-value */
-	uint32_t samples;       /* number of samples to plot per trigger */
-	uint32_t samples_left;  /* samples left in this trigger */
-	uint32_t idx;           /* file index number */
-	bool triggered;         /* are we currently triggered? */
-	FILE *f;                /* output file */
+	struct plot_cfg *cfg;	/* plot configuration */
+	uint32_t x;		/* current x-value */
+	uint32_t samples;	/* number of samples to plot per trigger */
+	uint32_t samples_left;	/* samples left in this trigger */
+	uint32_t idx;		/* file index number */
+	bool triggered;		/* are we currently triggered? */
+	FILE *f;		/* output file */
 };
 
 /******************************************************************************
@@ -42,8 +42,7 @@ static struct plot_cfg default_cfg = {
 	.duration = 30.f * SecsPerAudioBuffer,
 };
 
-static void plot_set_config(struct module *m, struct plot_cfg *cfg)
-{
+static void plot_set_config(struct module *m, struct plot_cfg *cfg) {
 	struct plot *this = (struct plot *)m->priv;
 
 	if (cfg == NULL) {
@@ -68,8 +67,7 @@ static void plot_set_config(struct module *m, struct plot_cfg *cfg)
 	}
 }
 
-static void plot_fname(struct module *m, const char *suffix, char *s, size_t n)
-{
+static void plot_fname(struct module *m, const char *suffix, char *s, size_t n) {
 	struct plot *this = (struct plot *)m->priv;
 
 	snprintf(s, n, "%s_%08x_%d.%s", this->cfg->name, m->id, this->idx, suffix);
@@ -80,8 +78,7 @@ static void plot_fname(struct module *m, const char *suffix, char *s, size_t n)
 	"import plotly\n"
 
 /* plot_header adds a header to the python plot file. */
-static int plot_header(struct module *m)
-{
+static int plot_header(struct module *m) {
 	struct plot *this = (struct plot *)m->priv;
 
 	return fprintf(this->f, PLOT_HEADER);
@@ -109,8 +106,7 @@ static int plot_header(struct module *m)
 	"plotly.offline.plot(figure, filename='%s.html')\n"
 
 /* plot_footer adds a footer to the python plot file. */
-static int plot_footer(struct module *m)
-{
+static int plot_footer(struct module *m) {
 	struct plot *this = (struct plot *)m->priv;
 	char name[128];
 
@@ -119,16 +115,14 @@ static int plot_footer(struct module *m)
 }
 
 /* plot_new_variable adds a new variable to the plot file. */
-static int plot_new_variable(struct module *m, const char *name)
-{
+static int plot_new_variable(struct module *m, const char *name) {
 	struct plot *this = (struct plot *)m->priv;
 
 	return fprintf(this->f, "%s = []\n", name);
 }
 
 /* plot_open opens a plot file. */
-static int plot_open(struct module *m)
-{
+static int plot_open(struct module *m) {
 	struct plot *this = (struct plot *)m->priv;
 	char name[128];
 
@@ -153,8 +147,7 @@ static int plot_open(struct module *m)
 }
 
 /* plot_close closes the plot file. */
-static void plot_close(struct module *m)
-{
+static void plot_close(struct module *m) {
 	struct plot *this = (struct plot *)m->priv;
 
 	LOG_INF("close plot file");
@@ -164,8 +157,7 @@ static void plot_close(struct module *m)
 	this->idx++;
 }
 
-static int plot_append(struct module *m, const char *name, float *buf, int n)
-{
+static int plot_append(struct module *m, const char *name, float *buf, int n) {
 	struct plot *this = (struct plot *)m->priv;
 
 	fprintf(this->f, "%s.extend([\n", name);
@@ -183,8 +175,7 @@ static int plot_append(struct module *m, const char *name, float *buf, int n)
  * module port functions
  */
 
-static void plot_port_trigger(struct module *m, const struct event *e)
-{
+static void plot_port_trigger(struct module *m, const struct event *e) {
 	struct plot *this = (struct plot *)m->priv;
 	bool trigger = event_get_bool(e);
 
@@ -196,7 +187,6 @@ static void plot_port_trigger(struct module *m, const struct event *e)
 		LOG_INF("%s already triggered", m->name);
 		return;
 	}
-
 	// trigger!
 	int rc = plot_open(m);
 	if (rc != 0) {
@@ -214,8 +204,7 @@ static void plot_port_trigger(struct module *m, const struct event *e)
  * module functions
  */
 
-static int plot_alloc(struct module *m, va_list vargs)
-{
+static int plot_alloc(struct module *m, va_list vargs) {
 	/* allocate the private data */
 	struct plot *this = ggm_calloc(1, sizeof(struct plot));
 
@@ -239,8 +228,7 @@ static int plot_alloc(struct module *m, va_list vargs)
 	return 0;
 }
 
-static void plot_free(struct module *m)
-{
+static void plot_free(struct module *m) {
 	struct plot *this = (struct plot *)m->priv;
 
 	if (this->triggered) {
@@ -249,8 +237,7 @@ static void plot_free(struct module *m)
 	ggm_free(this);
 }
 
-static bool plot_process(struct module *m, float *bufs[])
-{
+static bool plot_process(struct module *m, float *bufs[]) {
 	struct plot *this = (struct plot *)m->priv;
 
 	if (this->triggered) {
@@ -296,9 +283,9 @@ static bool plot_process(struct module *m, float *bufs[])
  */
 
 static const struct port_info in_ports[] = {
-	{ .name = "x", .type = PORT_TYPE_AUDIO },
-	{ .name = "y0", .type = PORT_TYPE_AUDIO },
-	{ .name = "trigger", .type = PORT_TYPE_BOOL, .pf = plot_port_trigger },
+	{.name = "x",.type = PORT_TYPE_AUDIO},
+	{.name = "y0",.type = PORT_TYPE_AUDIO},
+	{.name = "trigger",.type = PORT_TYPE_BOOL,.pf = plot_port_trigger},
 	PORT_EOL,
 };
 

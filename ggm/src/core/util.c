@@ -12,8 +12,7 @@
  * map_lin returns a linear mapping from x = 0..1 to y = y0..y1
  */
 
-float map_lin(float x, float y0, float y1)
-{
+float map_lin(float x, float y0, float y1) {
 	return ((y1 - y0) * x) + y0;
 }
 
@@ -24,8 +23,7 @@ float map_lin(float x, float y0, float y1)
  * k != 0 and abs(k) is typically 3..5
  */
 
-float map_exp(float x, float y0, float y1, float k)
-{
+float map_exp(float x, float y0, float y1, float k) {
 	if (k == 0) {
 		LOG_ERR("k == 0, use map_lin");
 		return map_lin(x, y0, y1);
@@ -41,8 +39,7 @@ float map_exp(float x, float y0, float y1, float k)
  * ? matches a single character
  */
 
-bool match(const char *first, const char *second)
-{
+bool match(const char *first, const char *second) {
 	/* If we reach at the end of both strings, we are done
 	 */
 	if (*first == '\0' && *second == '\0') {

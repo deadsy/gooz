@@ -19,11 +19,11 @@
  */
 
 enum {
-	SEQ_OP_NOP,                     /* no operation */
-	SEQ_OP_LOOP,                    /* return to beginning */
-	SEQ_OP_NOTE,                    /* note on/off */
-	SEQ_OP_REST,                    /* rest */
-	SEQ_OP_NUM                      /* must be last */
+	SEQ_OP_NOP,		/* no operation */
+	SEQ_OP_LOOP,		/* return to beginning */
+	SEQ_OP_NOTE,		/* note on/off */
+	SEQ_OP_REST,		/* rest */
+	SEQ_OP_NUM		/* must be last */
 };
 
 /******************************************************************************
@@ -31,13 +31,13 @@ enum {
  */
 
 enum {
-	SEQ_CTRL_STOP,          /* stop the sequencer */
-	SEQ_CTRL_START,         /* start the sequencer */
-	SEQ_CTRL_RESET,         /* reset the sequencer */
+	SEQ_CTRL_STOP,		/* stop the sequencer */
+	SEQ_CTRL_START,		/* start the sequencer */
+	SEQ_CTRL_RESET,		/* reset the sequencer */
 };
 
 /*****************************************************************************/
 
-#endif /* GGM_SRC_MODULE_SEQ_SEQ_H */
+#endif				/* GGM_SRC_MODULE_SEQ_SEQ_H */
 
 /*****************************************************************************/

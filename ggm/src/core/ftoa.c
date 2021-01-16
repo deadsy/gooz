@@ -12,10 +12,10 @@
  */
 
 struct float_parts {
-	float val;      /* float value */
-	uint32_t i;     /* whole number part */
-	uint32_t f;     /* fractional part */
-	int32_t e;      /* exponent */
+	float val;		/* float value */
+	uint32_t i;		/* whole number part */
+	uint32_t f;		/* fractional part */
+	int32_t e;		/* exponent */
 };
 
 #define POS_EXP_THOLD 1e7f
@@ -28,8 +28,7 @@ struct float_parts {
 #define FRAC_FLOAT (float)(POW10(FRAC_DIGITS))
 #define FRAC_UINT  (uint32_t)(POW10(FRAC_DIGITS))
 
-static void normalize_float(struct float_parts *fp)
-{
+static void normalize_float(struct float_parts *fp) {
 	float val = fp->val;
 	int32_t e = 0;
 
@@ -46,7 +45,7 @@ static void normalize_float(struct float_parts *fp)
 			val /= 1e8f;
 			e += 8;
 		}
-		if (val  >= 1e4f) {
+		if (val >= 1e4f) {
 			val /= 1e4f;
 			e += 4;
 		}
@@ -93,14 +92,13 @@ static void normalize_float(struct float_parts *fp)
 	fp->e = e;
 }
 
-static void split_float(struct float_parts *fp)
-{
+static void split_float(struct float_parts *fp) {
 	normalize_float(fp);
 
-	uint32_t i = (uint32_t)fp->val;
+	uint32_t i = (uint32_t) fp->val;
 	int32_t e = fp->e;
 	float rem = (fp->val - (float)i) * FRAC_FLOAT;
-	uint32_t f = (uint32_t)rem;
+	uint32_t f = (uint32_t) rem;
 
 	/* rounding */
 	rem -= f;
@@ -122,8 +120,7 @@ static void split_float(struct float_parts *fp)
 }
 
 /* str2str copies a string into a buffer */
-static int str2str(char *str, char *buf)
-{
+static int str2str(char *str, char *buf) {
 	int i = 0;
 
 	while (str[i] != 0) {
@@ -135,8 +132,7 @@ static int str2str(char *str, char *buf)
 }
 
 /* int2str creates a decimal number string in a buffer */
-static int int2str(uint32_t val, char *buf)
-{
+static int int2str(uint32_t val, char *buf) {
 	int i = 0;
 
 	/* work out the decimal string */
@@ -157,8 +153,7 @@ static int int2str(uint32_t val, char *buf)
 }
 
 /* frac2str creates a fractional decimal string in a buffer */
-static int frac2str(uint32_t val, char *buf)
-{
+static int frac2str(uint32_t val, char *buf) {
 	int j = FRAC_DIGITS + 1;
 
 	/* remove trailing zeroes */
@@ -185,8 +180,7 @@ static int frac2str(uint32_t val, char *buf)
 }
 
 /* float2str formats a floating point number as a string */
-int float2str(float val, char *buf)
-{
+int float2str(float val, char *buf) {
 	int i = 0;
 
 	if (isnanf(val)) {
@@ -228,8 +222,7 @@ int float2str(float val, char *buf)
 }
 
 /* ftoa formats a floating point number as a string */
-char *ftoa(float val, char *buf)
-{
+char *ftoa(float val, char *buf) {
 	float2str(val, buf);
 	return buf;
 }

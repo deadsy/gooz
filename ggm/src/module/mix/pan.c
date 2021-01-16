@@ -14,12 +14,12 @@
  */
 
 struct pan {
-	float vol;              /* overall volume */
-	float pan;              /* pan value 0 == left, 1 == right */
-	float new_vol_l;        /* target left channel volume */
-	float new_vol_r;        /* target right channel volume */
-	float vol_l;            /* left channel volume */
-	float vol_r;            /* right channel volume */
+	float vol;		/* overall volume */
+	float pan;		/* pan value 0 == left, 1 == right */
+	float new_vol_l;	/* target left channel volume */
+	float new_vol_r;	/* target right channel volume */
+	float vol_l;		/* left channel volume */
+	float vol_r;		/* right channel volume */
 };
 
 /******************************************************************************
@@ -27,8 +27,7 @@ struct pan {
  */
 
 /* pan_midi_cc converts a cc message to a 0..1 float event */
-static void pan_midi_cc(struct event *dst, const struct event *src)
-{
+static void pan_midi_cc(struct event *dst, const struct event *src) {
 	event_set_float(dst, event_get_midi_cc_float(src));
 }
 
@@ -36,8 +35,7 @@ static void pan_midi_cc(struct event *dst, const struct event *src)
  * module port functions
  */
 
-static void pan_set(struct module *m)
-{
+static void pan_set(struct module *m) {
 	struct pan *this = (struct pan *)m->priv;
 
 	/* Use sin/cos so that l*l + r*r = K (constant power) */
@@ -45,8 +43,7 @@ static void pan_set(struct module *m)
 	this->new_vol_r = this->vol * sinf(this->pan);
 }
 
-static void pan_port_vol(struct module *m, const struct event *e)
-{
+static void pan_port_vol(struct module *m, const struct event *e) {
 	struct pan *this = (struct pan *)m->priv;
 	float vol = clampf(event_get_float(e), 0.f, 1.f);
 
@@ -56,8 +53,7 @@ static void pan_port_vol(struct module *m, const struct event *e)
 	pan_set(m);
 }
 
-static void pan_port_pan(struct module *m, const struct event *e)
-{
+static void pan_port_pan(struct module *m, const struct event *e) {
 	struct pan *this = (struct pan *)m->priv;
 	float pan = clampf(event_get_float(e), 0.f, 1.f);
 
@@ -70,8 +66,7 @@ static void pan_port_pan(struct module *m, const struct event *e)
  * module functions
  */
 
-static int pan_alloc(struct module *m, va_list vargs)
-{
+static int pan_alloc(struct module *m, va_list vargs) {
 	/* allocate the private data */
 	struct pan *this = ggm_calloc(1, sizeof(struct pan));
 
@@ -87,15 +82,13 @@ static int pan_alloc(struct module *m, va_list vargs)
 	return 0;
 }
 
-static void pan_free(struct module *m)
-{
+static void pan_free(struct module *m) {
 	struct pan *this = (struct pan *)m->priv;
 
 	ggm_free(this);
 }
 
-static bool pan_process(struct module *m, float *bufs[])
-{
+static bool pan_process(struct module *m, float *bufs[]) {
 	struct pan *this = (struct pan *)m->priv;
 	float *in = bufs[0];
 	float *out0 = bufs[1];
@@ -118,15 +111,15 @@ static bool pan_process(struct module *m, float *bufs[])
  */
 
 static const struct port_info in_ports[] = {
-	{ .name = "in", .type = PORT_TYPE_AUDIO, },
-	{ .name = "vol", .type = PORT_TYPE_FLOAT, .pf = pan_port_vol, .mf = pan_midi_cc, },
-	{ .name = "pan", .type = PORT_TYPE_FLOAT, .pf = pan_port_pan, .mf = pan_midi_cc, },
+	{.name = "in",.type = PORT_TYPE_AUDIO,},
+	{.name = "vol",.type = PORT_TYPE_FLOAT,.pf = pan_port_vol,.mf = pan_midi_cc,},
+	{.name = "pan",.type = PORT_TYPE_FLOAT,.pf = pan_port_pan,.mf = pan_midi_cc,},
 	PORT_EOL,
 };
 
 static const struct port_info out_ports[] = {
-	{ .name = "out0", .type = PORT_TYPE_AUDIO, },
-	{ .name = "out1", .type = PORT_TYPE_AUDIO, },
+	{.name = "out0",.type = PORT_TYPE_AUDIO,},
+	{.name = "out1",.type = PORT_TYPE_AUDIO,},
 	PORT_EOL,
 };
 

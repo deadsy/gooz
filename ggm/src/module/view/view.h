@@ -12,15 +12,15 @@
  */
 
 struct plot_cfg {
-	const char *name;       /* name of output python file */
-	const char *title;      /* title of plot */
-	const char *x_name;     /* x-axis name */
-	const char *y0_name;    /* y0-axis name */
-	float duration;         /* sample time in seconds */
+	const char *name;	/* name of output python file */
+	const char *title;	/* title of plot */
+	const char *x_name;	/* x-axis name */
+	const char *y0_name;	/* y0-axis name */
+	float duration;		/* sample time in seconds */
 };
 
 /*****************************************************************************/
 
-#endif /* GGM_SRC_MODULE_VIEW_VIEW_H */
+#endif				/* GGM_SRC_MODULE_VIEW_VIEW_H */
 
 /*****************************************************************************/

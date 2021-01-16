@@ -15,11 +15,11 @@ enum {
 	SVF_TYPE_NULL,
 	SVF_TYPE_HC,
 	SVF_TYPE_TRAPEZOIDAL,
-	SVF_TYPE_MAX /* must be last */
+	SVF_TYPE_MAX		/* must be last */
 };
 
 /*****************************************************************************/
 
-#endif /* GGM_SRC_MODULE_FILTER_FILTER_H */
+#endif				/* GGM_SRC_MODULE_FILTER_FILTER_H */
 
 /*****************************************************************************/

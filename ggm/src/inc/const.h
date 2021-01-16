@@ -15,10 +15,10 @@
  * Root Module Port Number Limits.
  */
 
-#define MAX_AUDIO_IN 2  /* max number of audio input ports */
-#define MAX_AUDIO_OUT 2 /* max number of audio output ports */
-#define MAX_MIDI_IN 1   /* max number of MIDI input ports */
-#define MAX_MIDI_OUT 1  /* max number of MIDI output ports */
+#define MAX_AUDIO_IN 2		/* max number of audio input ports */
+#define MAX_AUDIO_OUT 2		/* max number of audio output ports */
+#define MAX_MIDI_IN 1		/* max number of MIDI input ports */
+#define MAX_MIDI_OUT 1		/* max number of MIDI output ports */
 
 #define MAX_AUDIO_PORTS (MAX_AUDIO_IN + MAX_AUDIO_OUT)
 
@@ -68,6 +68,6 @@
 
 /*****************************************************************************/
 
-#endif /* GGM_SRC_INC_CONST_H */
+#endif				/* GGM_SRC_INC_CONST_H */
 
 /*****************************************************************************/

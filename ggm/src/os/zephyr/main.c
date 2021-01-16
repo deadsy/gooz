@@ -13,8 +13,7 @@
  * main
  */
 
-int main(void)
-{
+int main(void) {
 	LOG_INF("GooGooMuck %s (%s)", GGM_VERSION, CONFIG_BOARD);
 
 	struct synth *s = synth_new();
@@ -37,7 +36,7 @@ int main(void)
 		ggm_mdelay(3);
 	}
 
-exit:
+ exit:
 	synth_del(s);
 	return 0;
 }

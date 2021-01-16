@@ -14,19 +14,18 @@
  */
 
 struct breath {
-	struct module *noise;   /* noise module */
-	struct module *adsr;    /* adsr module */
-	float kn;               /* noise scale */
-	float ka;               /* amplitude scale */
-	float kd;               /* derived scale */
+	struct module *noise;	/* noise module */
+	struct module *adsr;	/* adsr module */
+	float kn;		/* noise scale */
+	float ka;		/* amplitude scale */
+	float kd;		/* derived scale */
 };
 
 /******************************************************************************
  * breath functions
  */
 
-static void breath_set_scale(struct module *m, float kn, float ka)
-{
+static void breath_set_scale(struct module *m, float kn, float ka) {
 	struct breath *this = (struct breath *)m->priv;
 
 	this->kn = kn;
@@ -39,56 +38,49 @@ static void breath_set_scale(struct module *m, float kn, float ka)
  */
 
 /* breath_port_reset resets the state of the envelope */
-static void breath_port_reset(struct module *m, const struct event *e)
-{
+static void breath_port_reset(struct module *m, const struct event *e) {
 	struct breath *this = (struct breath *)m->priv;
 
 	event_in(this->adsr, "reset", e, NULL);
 }
 
 /* breath_port_gate is the envelope gate control, attack(>0) or release(=0) */
-static void breath_port_gate(struct module *m, const struct event *e)
-{
+static void breath_port_gate(struct module *m, const struct event *e) {
 	struct breath *this = (struct breath *)m->priv;
 
 	event_in(this->adsr, "gate", e, NULL);
 }
 
 /* breath_port_attack sets the attack time (secs) */
-static void breath_port_attack(struct module *m, const struct event *e)
-{
+static void breath_port_attack(struct module *m, const struct event *e) {
 	struct breath *this = (struct breath *)m->priv;
 
 	event_in(this->adsr, "attack", e, NULL);
 }
 
 /* breath_port_decay sets the decay time (secs) */
-static void breath_port_decay(struct module *m, const struct event *e)
-{
+static void breath_port_decay(struct module *m, const struct event *e) {
 	struct breath *this = (struct breath *)m->priv;
 
 	event_in(this->adsr, "decay", e, NULL);
 }
 
 /* breath_port_sustain sets the sustain level 0..1 */
-static void breath_port_sustain(struct module *m, const struct event *e)
-{
+static void breath_port_sustain(struct module *m, const struct event *e) {
 	struct breath *this = (struct breath *)m->priv;
 
 	event_in(this->adsr, "sustain", e, NULL);
 }
 
 /* breath_port_release sets the release time (secs) */
-static void breath_port_release(struct module *m, const struct event *e)
-{
+static void breath_port_release(struct module *m, const struct event *e) {
 	struct breath *this = (struct breath *)m->priv;
 
 	event_in(this->adsr, "release", e, NULL);
 }
 
 /* breath_port_kn sets the scale for the breath noise */
-static void breath_port_kn(struct module *m, const struct event *e)
-{
+static void breath_port_kn(struct module *m, const struct event *e) {
 	struct breath *this = (struct breath *)m->priv;
 	float kn = clampf_lo(event_get_float(e), 0.f);
 
@@ -97,8 +89,7 @@ static void breath_port_kn(struct module *m, const struct event *e)
 }
 
 /* breath_port_ka sets the overall breath excitation amplitude */
-static void breath_port_ka(struct module *m, const struct event *e)
-{
+static void breath_port_ka(struct module *m, const struct event *e) {
 	struct breath *this = (struct breath *)m->priv;
 	float ka = clampf_lo(event_get_float(e), 0.f);
 
@@ -110,8 +101,7 @@ static void breath_port_ka(struct module *m, const struct event *e)
  * module functions
  */
 
-static int breath_alloc(struct module *m, va_list vargs)
-{
+static int breath_alloc(struct module *m, va_list vargs) {
 	struct module *noise = NULL;
 	struct module *adsr = NULL;
 
@@ -146,15 +136,14 @@ static int breath_alloc(struct module *m, va_list vargs)
 
 	return 0;
 
-error:
+ error:
 	module_del(noise);
 	module_del(adsr);
 	ggm_free(m->priv);
 	return -1;
 }
 
-static void breath_free(struct module *m)
-{
+static void breath_free(struct module *m) {
 	struct breath *this = (struct breath *)m->priv;
 
 	module_del(this->noise);
@@ -162,18 +151,17 @@ static void breath_free(struct module *m)
 	ggm_free(this);
 }
 
-static bool breath_process(struct module *m, float *bufs[])
-{
+static bool breath_process(struct module *m, float *bufs[]) {
 	struct breath *this = (struct breath *)m->priv;
 	struct module *adsr = this->adsr;
 	float env[AudioBufferSize];
-	bool active = adsr->info->process(adsr, (float *[]){ env, });
+	bool active = adsr->info->process(adsr, (float *[]) { env, });
 
 	if (active) {
 		struct module *noise = this->noise;
 		float *out = bufs[0];
 		/* out = ((noise * env * kn) + env) * kd */
-		noise->info->process(noise, (float *[]){ out, });
+		noise->info->process(noise, (float *[]) { out, });
 		block_mul(out, env);
 		block_mul_k(out, this->kn);
 		block_add(out, env);
@@ -188,19 +176,19 @@ static bool breath_process(struct module *m, float *bufs[])
  */
 
 static const struct port_info in_ports[] = {
-	{ .name = "reset", .type = PORT_TYPE_BOOL, .pf = breath_port_reset },
-	{ .name = "gate", .type = PORT_TYPE_FLOAT, .pf = breath_port_gate },
-	{ .name = "attack", .type = PORT_TYPE_FLOAT, .pf = breath_port_attack },
-	{ .name = "decay", .type = PORT_TYPE_FLOAT, .pf = breath_port_decay },
-	{ .name = "sustain", .type = PORT_TYPE_FLOAT, .pf = breath_port_sustain },
-	{ .name = "release", .type = PORT_TYPE_FLOAT, .pf = breath_port_release },
-	{ .name = "kn", .type = PORT_TYPE_FLOAT, .pf = breath_port_kn },
-	{ .name = "ka", .type = PORT_TYPE_FLOAT, .pf = breath_port_ka },
+	{.name = "reset",.type = PORT_TYPE_BOOL,.pf = breath_port_reset},
+	{.name = "gate",.type = PORT_TYPE_FLOAT,.pf = breath_port_gate},
+	{.name = "attack",.type = PORT_TYPE_FLOAT,.pf = breath_port_attack},
+	{.name = "decay",.type = PORT_TYPE_FLOAT,.pf = breath_port_decay},
+	{.name = "sustain",.type = PORT_TYPE_FLOAT,.pf = breath_port_sustain},
+	{.name = "release",.type = PORT_TYPE_FLOAT,.pf = breath_port_release},
+	{.name = "kn",.type = PORT_TYPE_FLOAT,.pf = breath_port_kn},
+	{.name = "ka",.type = PORT_TYPE_FLOAT,.pf = breath_port_ka},
 	PORT_EOL,
 };
 
 static const struct port_info out_ports[] = {
-	{ .name = "out", .type = PORT_TYPE_AUDIO, },
+	{.name = "out",.type = PORT_TYPE_AUDIO,},
 	PORT_EOL,
 };
 

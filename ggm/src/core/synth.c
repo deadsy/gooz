@@ -13,8 +13,7 @@
  */
 
 /* synth_event_rd reads an event from the event queue */
-static int synth_event_rd(struct synth *s, struct qevent *e)
-{
+static int synth_event_rd(struct synth *s, struct qevent *e) {
 	struct event_queue *eq = &s->eq;
 	int rc = 0;
 
@@ -32,13 +31,12 @@ static int synth_event_rd(struct synth *s, struct qevent *e)
 	/* advance the read index */
 	eq->rd = (eq->rd + 1) & (NUM_EVENTS - 1);
 
-exit:
+ exit:
 	return rc;
 }
 
 /* synth_event_wr writes an event to the event queue */
-int synth_event_wr(struct synth *s, struct module *m, int idx, const struct event *e)
-{
+int synth_event_wr(struct synth *s, struct module *m, int idx, const struct event *e) {
 	struct event_queue *eq = &s->eq;
 	int rc = 0;
 
@@ -60,7 +58,7 @@ int synth_event_wr(struct synth *s, struct module *m, int idx, const struct even
 	/* advance the write index */
 	eq->wr = wr;
 
-exit:
+ exit:
 	return rc;
 }
 
@@ -68,8 +66,7 @@ exit:
  * synth_new allocates a new synth.
  */
 
-struct synth *synth_new(void)
-{
+struct synth *synth_new(void) {
 	/* allocate the synth */
 	struct synth *s = ggm_calloc(1, sizeof(struct synth));
 
@@ -85,8 +82,7 @@ struct synth *synth_new(void)
  * synth_del closes a synth and deallocates resources.
  */
 
-void synth_del(struct synth *s)
-{
+void synth_del(struct synth *s) {
 	if (s == NULL) {
 		return;
 	}
@@ -105,8 +101,7 @@ void synth_del(struct synth *s)
  */
 
 #if MAX_MIDI_OUT > 0
-static void synth_midi_out_0(struct module *m, const struct event *e)
-{
+static void synth_midi_out_0(struct module *m, const struct event *e) {
 	struct synth *s = m->top;
 
 	s->midi_out(s->driver, e, 0);
@@ -114,8 +109,7 @@ static void synth_midi_out_0(struct module *m, const struct event *e)
 #endif
 
 #if MAX_MIDI_OUT > 1
-static void synth_midi_out_1(struct module *m, const struct event *e)
-{
+static void synth_midi_out_1(struct module *m, const struct event *e) {
 	struct synth *s = m->top;
 
 	s->midi_out(s->driver, e, 1);
@@ -123,8 +117,7 @@ static void synth_midi_out_1(struct module *m, const struct event *e)
 #endif
 
 #if MAX_MIDI_OUT > 2
-static void synth_midi_out_2(struct module *m, const struct event *e)
-{
+static void synth_midi_out_2(struct module *m, const struct event *e) {
 	struct synth *s = m->top;
 
 	s->midi_out(s->driver, e, 2);
@@ -132,8 +125,7 @@ static void synth_midi_out_2(struct module *m, const struct event *e)
 #endif
 
 #if MAX_MIDI_OUT > 3
-static void synth_midi_out_3(struct module *m, const struct event *e)
-{
+static void synth_midi_out_3(struct module *m, const struct event *e) {
 	struct synth *s = m->top;
 
 	s->midi_out(s->driver, e, 3);
@@ -162,8 +154,7 @@ static port_func synth_midi_out[MAX_MIDI_OUT] = {
  */
 
 /* synth_module_cfg sets the top-level synth MIDI map configuration */
-int synth_set_cfg(struct synth *s, const struct synth_cfg *cfg)
-{
+int synth_set_cfg(struct synth *s, const struct synth_cfg *cfg) {
 	if (cfg == NULL) {
 		LOG_ERR("synth cfg null");
 		return -1;
@@ -179,8 +170,7 @@ int synth_set_cfg(struct synth *s, const struct synth_cfg *cfg)
 /* synth_lookup_cfg looks for a path match in the synth configuration.
  * If a match is found it returns the configuration structure pointer.
  */
-static const void *synth_lookup_cfg(struct synth *s, const char *path)
-{
+static const void *synth_lookup_cfg(struct synth *s, const char *path) {
 	const struct synth_cfg *sc = s->cfg;
 
 	while (sc->path != NULL) {
@@ -201,8 +191,7 @@ static const void *synth_lookup_cfg(struct synth *s, const char *path)
 /* synth_lookup_midi_map looks for the given ch/cc values in the MIDI map.
  * If alloc is true it will return a pointer to a new slot (if available).
  */
-static struct midi_map *synth_lookup_midi_map(struct synth *s, int id, bool alloc)
-{
+static struct midi_map *synth_lookup_midi_map(struct synth *s, int id, bool alloc) {
 	struct midi_map *mm = &s->mmap[0];
 
 	for (int i = 0; i < NUM_MIDI_MAP_SLOTS; i++) {
@@ -226,8 +215,7 @@ static struct midi_map *synth_lookup_midi_map(struct synth *s, int id, bool allo
 }
 
 /* synth_alloc_midi_map_entry allocates an empty  midi map entry */
-static struct midi_map_entry *synth_alloc_midi_map_entry(struct midi_map *mm)
-{
+static struct midi_map_entry *synth_alloc_midi_map_entry(struct midi_map *mm) {
 	struct midi_map_entry *mme = &mm->mme[0];
 
 	for (int i = 0; i < NUM_MIDI_MAP_ENTRIES; i++) {
@@ -238,13 +226,11 @@ static struct midi_map_entry *synth_alloc_midi_map_entry(struct midi_map *mm)
 	return NULL;
 }
 
-
 /* synth_midi_cc looks up the midi mapping table.
  * If it finds a matching entry the event is dispatched
  * to the module:port function.
  */
-bool synth_midi_cc(struct synth *s, const struct event *e)
-{
+bool synth_midi_cc(struct synth *s, const struct event *e) {
 	if (!is_midi_cc(e)) {
 		return false;
 	}
@@ -266,7 +252,7 @@ bool synth_midi_cc(struct synth *s, const struct event *e)
 		}
 		midi_func mf = mme[i].pi->mf;
 		port_func pf = mme[i].pi->pf;
-		/* convert from a MIDI event to a port event*/
+		/* convert from a MIDI event to a port event */
 		struct event pe;
 		mf(&pe, e);
 		/* dispatch it to the port function */
@@ -280,9 +266,8 @@ bool synth_midi_cc(struct synth *s, const struct event *e)
  * synth_input_cfg configures the input port of a module
  */
 
-void synth_input_cfg(struct synth *s, struct module *m, const struct port_info *pi)
-{
-	/* build the full module:port name*/
+void synth_input_cfg(struct synth *s, struct module *m, const struct port_info *pi) {
+	/* build the full module:port name */
 	char path[128];
 
 	snprintf(path, sizeof(path), "%s:%s", m->name, pi->name);
@@ -296,26 +281,26 @@ void synth_input_cfg(struct synth *s, struct module *m, const struct port_info *
 
 	/* send events for the initial configuration to the port */
 
-	int id = 0; /* MIDI ch/cc id */
+	int id = 0;		/* MIDI ch/cc id */
 	switch (pi->type) {
-	case PORT_TYPE_FLOAT: {
-		struct port_float_cfg *cfg = (struct port_float_cfg *)ptr;
-		id = cfg->id;
-		event_in_float(m, pi->name, cfg->init, NULL);
-		break;
-	}
-	case PORT_TYPE_INT: {
-		struct port_int_cfg *cfg = (struct port_int_cfg *)ptr;
-		id = cfg->id;
-		event_in_int(m, pi->name, cfg->init, NULL);
-		break;
-	}
-	case PORT_TYPE_BOOL: {
-		struct port_bool_cfg *cfg = (struct port_bool_cfg *)ptr;
-		id = cfg->id;
-		event_in_bool(m, pi->name, cfg->init, NULL);
-		break;
-	}
+	case PORT_TYPE_FLOAT:{
+			struct port_float_cfg *cfg = (struct port_float_cfg *)ptr;
+			id = cfg->id;
+			event_in_float(m, pi->name, cfg->init, NULL);
+			break;
+		}
+	case PORT_TYPE_INT:{
+			struct port_int_cfg *cfg = (struct port_int_cfg *)ptr;
+			id = cfg->id;
+			event_in_int(m, pi->name, cfg->init, NULL);
+			break;
+		}
+	case PORT_TYPE_BOOL:{
+			struct port_bool_cfg *cfg = (struct port_bool_cfg *)ptr;
+			id = cfg->id;
+			event_in_bool(m, pi->name, cfg->init, NULL);
+			break;
+		}
 	default:
 		LOG_ERR("is this port configurable? %s", path);
 		return;
@@ -360,8 +345,7 @@ void synth_input_cfg(struct synth *s, struct module *m, const struct port_info *
  * synth_set_root sets the root patch of the synth.
  */
 
-int synth_set_root(struct synth *s, struct module *m)
-{
+int synth_set_root(struct synth *s, struct module *m) {
 	int nports;
 
 	LOG_INF("%s", m->name);
@@ -412,8 +396,7 @@ int synth_set_root(struct synth *s, struct module *m)
 	return 0;
 }
 
-bool synth_has_root(struct synth *s)
-{
+bool synth_has_root(struct synth *s) {
 	return s->root != NULL;
 }
 
@@ -422,8 +405,7 @@ bool synth_has_root(struct synth *s)
  * buffers are non-zero.
  */
 
-bool synth_loop(struct synth *s)
-{
+bool synth_loop(struct synth *s) {
 	struct module *m = s->root;
 	struct qevent q;
 

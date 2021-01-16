@@ -17,11 +17,11 @@
 
 enum port_type {
 	PORT_TYPE_NULL = 0,
-	PORT_TYPE_AUDIO,                /* audio buffers */
-	PORT_TYPE_FLOAT,                /* event with float values */
-	PORT_TYPE_INT,                  /* event with integer values */
-	PORT_TYPE_BOOL,                 /* event with boolean values */
-	PORT_TYPE_MIDI,                 /* event with MIDI data */
+	PORT_TYPE_AUDIO,	/* audio buffers */
+	PORT_TYPE_FLOAT,	/* event with float values */
+	PORT_TYPE_INT,		/* event with integer values */
+	PORT_TYPE_BOOL,		/* event with boolean values */
+	PORT_TYPE_MIDI,		/* event with MIDI data */
 };
 
 /* port_info contains the information describing a port. The information is
@@ -29,10 +29,10 @@ enum port_type {
  * at runtime, so the structure can be stored in read-only memory.
  */
 struct port_info {
-	const char *name;       /* port name */
-	enum port_type type;    /* port type */
-	port_func pf;           /* port event function */
-	midi_func mf;           /* MIDI event conversion function */
+	const char *name;	/* port name */
+	enum port_type type;	/* port type */
+	port_func pf;		/* port event function */
+	midi_func mf;		/* MIDI event conversion function */
 };
 
 #define PORT_EOL { NULL, PORT_TYPE_NULL, NULL, NULL }
@@ -45,9 +45,9 @@ struct port_info {
  */
 
 struct output_dst {
-	struct output_dst *next;        /* next destination */
-	struct module *m;               /* destination module */
-	port_func func;                 /* port function to call */
+	struct output_dst *next;	/* next destination */
+	struct module *m;	/* destination module */
+	port_func func;		/* port function to call */
 };
 
 /******************************************************************************
@@ -71,6 +71,6 @@ void port_forward(struct module *s, const char *sname, struct module *d, const c
 
 /*****************************************************************************/
 
-#endif /* GGM_SRC_INC_PORT_H */
+#endif				/* GGM_SRC_INC_PORT_H */
 
 /*****************************************************************************/

@@ -17,16 +17,14 @@ struct xmod {
  * module port functions
  */
 
-static void xmod_port_name(struct module *m, const struct event *e)
-{
+static void xmod_port_name(struct module *m, const struct event *e) {
 }
 
 /******************************************************************************
  * module functions
  */
 
-static int xmod_alloc(struct module *m, va_list vargs)
-{
+static int xmod_alloc(struct module *m, va_list vargs) {
 	/* allocate the private data */
 	struct xmod *this = ggm_calloc(1, sizeof(struct xmod));
 
@@ -38,15 +36,13 @@ static int xmod_alloc(struct module *m, va_list vargs)
 	return 0;
 }
 
-static void xmod_free(struct module *m)
-{
+static void xmod_free(struct module *m) {
 	struct xmod *this = (struct xmod *)m->priv;
 
 	ggm_free(this);
 }
 
-static bool xmod_process(struct module *m, float *bufs[])
-{
+static bool xmod_process(struct module *m, float *bufs[]) {
 	struct xmod *this = (struct xmod *)m->priv;
 	float *out = bufs[0];
 
@@ -61,12 +57,12 @@ static bool xmod_process(struct module *m, float *bufs[])
  */
 
 static const struct port_info in_ports[] = {
-	{ .name = "name", .type = PORT_TYPE_FLOAT, .pf = xmod_port_name },
+	{.name = "name",.type = PORT_TYPE_FLOAT,.pf = xmod_port_name},
 	PORT_EOL,
 };
 
 static const struct port_info out_ports[] = {
-	{ .name = "out", .type = PORT_TYPE_AUDIO, },
+	{.name = "out",.type = PORT_TYPE_AUDIO,},
 	PORT_EOL,
 };
 

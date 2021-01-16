@@ -23,25 +23,25 @@ struct midi_map_entry {
 	const struct port_info *pi;
 };
 
-#define NUM_MIDI_MAP_ENTRIES 8          /* maximum number of ports on a given MIDI cc */
-#define NUM_MIDI_MAP_SLOTS 8            /* maximum number of mapped MIDI cc's */
+#define NUM_MIDI_MAP_ENTRIES 8	/* maximum number of ports on a given MIDI cc */
+#define NUM_MIDI_MAP_SLOTS 8	/* maximum number of mapped MIDI cc's */
 
 /* midi_map records the set of modules/ports mapped to a given ch/cc value */
 struct midi_map {
-	int id;                                                 /* MIDI channel/cc id */
-	struct midi_map_entry mme[NUM_MIDI_MAP_ENTRIES];        /* map entries for this CC */
+	int id;			/* MIDI channel/cc id */
+	struct midi_map_entry mme[NUM_MIDI_MAP_ENTRIES];	/* map entries for this CC */
 };
 
 /******************************************************************************
  * top-level synth structure
  */
 
-#define NUM_EVENTS 16 /* must be a power of 2 */
+#define NUM_EVENTS 16		/* must be a power of 2 */
 
 struct qevent {
-	struct module *m;       /* source module */
-	int idx;                /* output port index */
-	struct event e;         /* the queued event */
+	struct module *m;	/* source module */
+	int idx;		/* output port index */
+	struct event e;		/* the queued event */
 };
 
 /* circular buffer for events */
@@ -52,13 +52,13 @@ struct event_queue {
 };
 
 struct synth {
-	struct module *root;                            /* root patch */
-	struct event_queue eq;                          /* input event queue */
-	const struct synth_cfg *cfg;                    /* top-level module configuration */
-	midi_out_func midi_out;                         /* MIDI output callback */
-	void *driver;                                   /* pointer to audio/midi driver (E.g. jack) */
-	struct midi_map mmap[NUM_MIDI_MAP_SLOTS];       /* MIDI CC map */
-	float *bufs[MAX_AUDIO_PORTS];                   /* allocated audio buffers */
+	struct module *root;	/* root patch */
+	struct event_queue eq;	/* input event queue */
+	const struct synth_cfg *cfg;	/* top-level module configuration */
+	midi_out_func midi_out;	/* MIDI output callback */
+	void *driver;		/* pointer to audio/midi driver (E.g. jack) */
+	struct midi_map mmap[NUM_MIDI_MAP_SLOTS];	/* MIDI CC map */
+	float *bufs[MAX_AUDIO_PORTS];	/* allocated audio buffers */
 };
 
 /******************************************************************************
@@ -78,6 +78,6 @@ bool synth_midi_cc(struct synth *s, const struct event *e);
 
 /*****************************************************************************/
 
-#endif /* GGM_SRC_INC_SYNTH_H */
+#endif				/* GGM_SRC_INC_SYNTH_H */
 
 /*****************************************************************************/

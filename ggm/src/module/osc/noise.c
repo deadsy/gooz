@@ -23,18 +23,17 @@
  */
 
 struct noise {
-	int type;               /* noise type */
-	uint32_t rand;          /* random state */
-	float b0, b1, b2, b3;   /* state variables */
-	float b4, b5, b6;       /* state variables */
+	int type;		/* noise type */
+	uint32_t rand;		/* random state */
+	float b0, b1, b2, b3;	/* state variables */
+	float b4, b5, b6;	/* state variables */
 };
 
 /******************************************************************************
  * module port functions
  */
 
-static void noise_port_null(struct module *m, const struct event *e)
-{
+static void noise_port_null(struct module *m, const struct event *e) {
 	// do nothing ...
 }
 
@@ -42,8 +41,7 @@ static void noise_port_null(struct module *m, const struct event *e)
  * noise generating functions
  */
 
-static void generate_white(struct module *m, float *out)
-{
+static void generate_white(struct module *m, float *out) {
 	struct noise *this = (struct noise *)m->priv;
 
 	for (int i = 0; i < AudioBufferSize; i++) {
@@ -51,8 +49,7 @@ static void generate_white(struct module *m, float *out)
 	}
 }
 
-static void generate_brown(struct module *m, float *out)
-{
+static void generate_brown(struct module *m, float *out) {
 	struct noise *this = (struct noise *)m->priv;
 	float b0 = this->b0;
 
@@ -64,8 +61,7 @@ static void generate_brown(struct module *m, float *out)
 	this->b0 = b0;
 }
 
-static void generate_pink1(struct module *m, float *out)
-{
+static void generate_pink1(struct module *m, float *out) {
 	struct noise *this = (struct noise *)m->priv;
 	float b0 = this->b0;
 	float b1 = this->b1;
@@ -84,8 +80,7 @@ static void generate_pink1(struct module *m, float *out)
 	this->b2 = b2;
 }
 
-static void generate_pink2(struct module *m, float *out)
-{
+static void generate_pink2(struct module *m, float *out) {
 	struct noise *this = (struct noise *)m->priv;
 	float b0 = this->b0;
 	float b1 = this->b1;
@@ -120,8 +115,7 @@ static void generate_pink2(struct module *m, float *out)
  * module functions
  */
 
-static int noise_alloc(struct module *m, va_list vargs)
-{
+static int noise_alloc(struct module *m, va_list vargs) {
 	/* allocate the private data */
 	struct noise *this = ggm_calloc(1, sizeof(struct noise));
 
@@ -142,20 +136,18 @@ static int noise_alloc(struct module *m, va_list vargs)
 
 	return 0;
 
-error:
+ error:
 	ggm_free(this);
 	return -1;
 }
 
-static void noise_free(struct module *m)
-{
+static void noise_free(struct module *m) {
 	struct noise *this = (struct noise *)m->priv;
 
 	ggm_free(this);
 }
 
-static bool noise_process(struct module *m, float *bufs[])
-{
+static bool noise_process(struct module *m, float *bufs[]) {
 	struct noise *this = (struct noise *)m->priv;
 	float *out = bufs[0];
 
@@ -184,13 +176,13 @@ static bool noise_process(struct module *m, float *bufs[])
  */
 
 static const struct port_info in_ports[] = {
-	{ .name = "reset", .type = PORT_TYPE_BOOL, .pf = noise_port_null },
-	{ .name = "frequency", .type = PORT_TYPE_FLOAT, .pf = noise_port_null },
+	{.name = "reset",.type = PORT_TYPE_BOOL,.pf = noise_port_null},
+	{.name = "frequency",.type = PORT_TYPE_FLOAT,.pf = noise_port_null},
 	PORT_EOL,
 };
 
 static const struct port_info out_ports[] = {
-	{ .name = "out", .type = PORT_TYPE_AUDIO, },
+	{.name = "out",.type = PORT_TYPE_AUDIO,},
 	PORT_EOL,
 };
 

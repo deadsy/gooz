@@ -10,8 +10,7 @@
  * event_in sends an event to a named port on a module.
  */
 
-void event_in(struct module *m, const char *name, const struct event *e, port_func *hdl)
-{
+void event_in(struct module *m, const char *name, const struct event *e, port_func * hdl) {
 	const struct module_info *mi = m->info;
 	port_func func = NULL;
 
@@ -24,12 +23,12 @@ void event_in(struct module *m, const char *name, const struct event *e, port_fu
 				/* end of list */
 				break;
 			}
-			/* port name found ?*/
+			/* port name found ? */
 			if (strcmp(name, p->name) == 0) {
 				func = p->pf;
 				break;
 			}
-			/*next ...*/
+			/*next ... */
 			i++;
 		}
 	} else {
@@ -56,8 +55,7 @@ void event_in(struct module *m, const char *name, const struct event *e, port_fu
  * The event will be sent to the ports connected to the output port.
  */
 
-void event_out(struct module *m, int idx, const struct event *e)
-{
+void event_out(struct module *m, int idx, const struct event *e) {
 	struct output_dst *ptr = m->dst[idx];
 
 	/* iterate over the event destinations */
@@ -70,8 +68,7 @@ void event_out(struct module *m, int idx, const struct event *e)
 }
 
 /* event_out_name calls event_out on a named port */
-void event_out_name(struct module *m, const char *name, const struct event *e)
-{
+void event_out_name(struct module *m, const char *name, const struct event *e) {
 	/* get the index of the output port */
 	int idx = port_get_index(m->info->out, name);
 
@@ -88,8 +85,7 @@ void event_out_name(struct module *m, const char *name, const struct event *e)
  * port.
  */
 
-void event_push(struct module *m, int idx, const struct event *e)
-{
+void event_push(struct module *m, int idx, const struct event *e) {
 	/* queue the event for later processing */
 	int rc = synth_event_wr(m->top, m, idx, e);
 
@@ -99,8 +95,7 @@ void event_push(struct module *m, int idx, const struct event *e)
 }
 
 /* push to a named port */
-void event_push_name(struct module *m, const char *name, const struct event *e)
-{
+void event_push_name(struct module *m, const char *name, const struct event *e) {
 	/* get the index of the output port */
 	int idx = port_get_index(m->info->out, name);
 
@@ -112,6 +107,3 @@ void event_push_name(struct module *m, const char *name, const struct event *e)
 }
 
 /*****************************************************************************/
-
-
-

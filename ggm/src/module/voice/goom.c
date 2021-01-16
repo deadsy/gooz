@@ -11,11 +11,11 @@
  */
 
 struct goom {
-	struct module *amp_env; /* amplitude adsr envelope */
-	struct module *lpf_env; /* low pass filter adsr envelope */
-	struct module *osc;     /* goom oscillator */
-	struct module *lpf;     /* low pass filter */
-	float vel;              /* note velocity */
+	struct module *amp_env;	/* amplitude adsr envelope */
+	struct module *lpf_env;	/* low pass filter adsr envelope */
+	struct module *osc;	/* goom oscillator */
+	struct module *lpf;	/* low pass filter */
+	float vel;		/* note velocity */
 };
 
 /******************************************************************************
@@ -23,8 +23,7 @@ struct goom {
  */
 
 /* goom_port_reset resets the voice state */
-static void goom_port_reset(struct module *m, const struct event *e)
-{
+static void goom_port_reset(struct module *m, const struct event *e) {
 	struct goom *this = (struct goom *)m->priv;
 
 	/* forward the reset to the sub-modules */
@@ -33,8 +32,7 @@ static void goom_port_reset(struct module *m, const struct event *e)
 }
 
 /* goom_port_gate is the voice gate event */
-static void goom_port_gate(struct module *m, const struct event *e)
-{
+static void goom_port_gate(struct module *m, const struct event *e) {
 	struct goom *this = (struct goom *)m->priv;
 
 	/* gate the envelopes */
@@ -45,8 +43,7 @@ static void goom_port_gate(struct module *m, const struct event *e)
 }
 
 /* goom_port_note is the pitch bent MIDI note (float) used to set the voice frequency */
-static void goom_port_note(struct module *m, const struct event *e)
-{
+static void goom_port_note(struct module *m, const struct event *e) {
 	struct goom *this = (struct goom *)m->priv;
 
 	/* set the oscillator note */
@@ -57,8 +54,7 @@ static void goom_port_note(struct module *m, const struct event *e)
  * module functions
  */
 
-static int goom_alloc(struct module *m, va_list vargs)
-{
+static int goom_alloc(struct module *m, va_list vargs) {
 	struct module *amp_env = NULL;
 	struct module *lpf_env = NULL;
 	struct module *osc = NULL;
@@ -102,7 +98,7 @@ static int goom_alloc(struct module *m, va_list vargs)
 
 	return 0;
 
-error:
+ error:
 	module_del(amp_env);
 	module_del(lpf_env);
 	module_del(osc);
@@ -111,8 +107,7 @@ error:
 	return -1;
 }
 
-static void goom_free(struct module *m)
-{
+static void goom_free(struct module *m) {
 	struct goom *this = (struct goom *)m->priv;
 
 	module_del(this->amp_env);
@@ -122,12 +117,11 @@ static void goom_free(struct module *m)
 	ggm_free(this);
 }
 
-static bool goom_process(struct module *m, float *bufs[])
-{
+static bool goom_process(struct module *m, float *bufs[]) {
 	struct goom *this = (struct goom *)m->priv;
 	struct module *amp_env = this->amp_env;
 	float env[AudioBufferSize];
-	bool active = amp_env->info->process(amp_env, (float *[]){ env, });
+	bool active = amp_env->info->process(amp_env, (float *[]) { env, });
 
 	if (active) {
 		// struct module *lpf_env = this->lpf_env;
@@ -138,14 +132,13 @@ static bool goom_process(struct module *m, float *bufs[])
 		float buf[AudioBufferSize];
 
 		// get the oscillator output
-		osc->info->process(osc, (float *[]){ buf, });
+		osc->info->process(osc, (float *[]) { buf, });
 
 		// feed it to the LPF
-		lpf->info->process(lpf, (float *[]){ buf, out, });
+		lpf->info->process(lpf, (float *[]) { buf, out, });
 
 		// apply the amplitude envelope
 		block_mul(out, env);
-
 
 	}
 
@@ -157,14 +150,14 @@ static bool goom_process(struct module *m, float *bufs[])
  */
 
 static const struct port_info in_ports[] = {
-	{ .name = "reset", .type = PORT_TYPE_BOOL, .pf = goom_port_reset },
-	{ .name = "gate", .type = PORT_TYPE_FLOAT, .pf = goom_port_gate },
-	{ .name = "note", .type = PORT_TYPE_FLOAT, .pf = goom_port_note },
+	{.name = "reset",.type = PORT_TYPE_BOOL,.pf = goom_port_reset},
+	{.name = "gate",.type = PORT_TYPE_FLOAT,.pf = goom_port_gate},
+	{.name = "note",.type = PORT_TYPE_FLOAT,.pf = goom_port_note},
 	PORT_EOL,
 };
 
 static const struct port_info out_ports[] = {
-	{ .name = "out", .type = PORT_TYPE_AUDIO, },
+	{.name = "out",.type = PORT_TYPE_AUDIO,},
 	PORT_EOL,
 };
 

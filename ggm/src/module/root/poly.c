@@ -22,32 +22,30 @@
 #if defined(SYNTH_SIMPLE_GOOM)
 
 static const struct synth_cfg cfg[] = {
-	{ "root.poly.voice*.adsr:attack",
-	  &(struct port_float_cfg){ .init = 0.2f, .id = MIDI_ID(MIDI_CH, 1), }, },
-	{ "root.poly.voice*.adsr:decay",
-	  &(struct port_float_cfg){ .init = 0.1f, .id = MIDI_ID(MIDI_CH, 2), }, },
-	{ "root.poly.voice*.adsr:sustain",
-	  &(struct port_float_cfg){ .init = 0.3f, .id = MIDI_ID(MIDI_CH, 3), }, },
-	{ "root.poly.voice*.adsr:release",
-	  &(struct port_float_cfg){ .init = 0.3f, .id = MIDI_ID(MIDI_CH, 4), }, },
-	{ "root.poly.voice*.goom:duty",
-	  &(struct port_float_cfg){ .init = 0.5f, .id = MIDI_ID(MIDI_CH, 5), }, },
-	{ "root.poly.voice*.goom:slope",
-	  &(struct port_float_cfg){ .init = 0.5f, .id = MIDI_ID(MIDI_CH, 6), }, },
-	{ "root.pan:pan",
-	  &(struct port_float_cfg){ .init = 0.5f, .id = MIDI_ID(MIDI_CH, 7), }, },
-	{ "root.pan:vol",
-	  &(struct port_float_cfg){ .init = 0.8f, .id = MIDI_ID(MIDI_CH, 8), }, },
+	{"root.poly.voice*.adsr:attack",
+	 &(struct port_float_cfg) {.init = 0.2f,.id = MIDI_ID(MIDI_CH, 1),},},
+	{"root.poly.voice*.adsr:decay",
+	 &(struct port_float_cfg) {.init = 0.1f,.id = MIDI_ID(MIDI_CH, 2),},},
+	{"root.poly.voice*.adsr:sustain",
+	 &(struct port_float_cfg) {.init = 0.3f,.id = MIDI_ID(MIDI_CH, 3),},},
+	{"root.poly.voice*.adsr:release",
+	 &(struct port_float_cfg) {.init = 0.3f,.id = MIDI_ID(MIDI_CH, 4),},},
+	{"root.poly.voice*.goom:duty",
+	 &(struct port_float_cfg) {.init = 0.5f,.id = MIDI_ID(MIDI_CH, 5),},},
+	{"root.poly.voice*.goom:slope",
+	 &(struct port_float_cfg) {.init = 0.5f,.id = MIDI_ID(MIDI_CH, 6),},},
+	{"root.pan:pan",
+	 &(struct port_float_cfg) {.init = 0.5f,.id = MIDI_ID(MIDI_CH, 7),},},
+	{"root.pan:vol",
+	 &(struct port_float_cfg) {.init = 0.8f,.id = MIDI_ID(MIDI_CH, 8),},},
 	SYNTH_CFG_EOL
 };
 
-static struct module *voice_osc(struct module *m, int id)
-{
+static struct module *voice_osc(struct module *m, int id) {
 	return module_new(m, "osc/goom", id);
 }
 
-static struct module *poly_voice(struct module *m, int id)
-{
+static struct module *poly_voice(struct module *m, int id) {
 	return module_new(m, "voice/osc", id, voice_osc);
 }
 
@@ -58,28 +56,26 @@ static struct module *poly_voice(struct module *m, int id)
 #elif defined(SYNTH_SIMPLE_SINE)
 
 static const struct synth_cfg cfg[] = {
-	{ "root.poly.voice*.adsr:attack",
-	  &(struct port_float_cfg){ .init = 0.2f, .id = MIDI_ID(MIDI_CH, 1), }, },
-	{ "root.poly.voice*.adsr:decay",
-	  &(struct port_float_cfg){ .init = 0.1f, .id = MIDI_ID(MIDI_CH, 2), }, },
-	{ "root.poly.voice*.adsr:sustain",
-	  &(struct port_float_cfg){ .init = 0.3f, .id = MIDI_ID(MIDI_CH, 3), }, },
-	{ "root.poly.voice*.adsr:release",
-	  &(struct port_float_cfg){ .init = 0.3f, .id = MIDI_ID(MIDI_CH, 4), }, },
-	{ "root.pan:pan",
-	  &(struct port_float_cfg){ .init = 0.5f, .id = MIDI_ID(MIDI_CH, 7), }, },
-	{ "root.pan:vol",
-	  &(struct port_float_cfg){ .init = 0.8f, .id = MIDI_ID(MIDI_CH, 8), }, },
+	{"root.poly.voice*.adsr:attack",
+	 &(struct port_float_cfg) {.init = 0.2f,.id = MIDI_ID(MIDI_CH, 1),},},
+	{"root.poly.voice*.adsr:decay",
+	 &(struct port_float_cfg) {.init = 0.1f,.id = MIDI_ID(MIDI_CH, 2),},},
+	{"root.poly.voice*.adsr:sustain",
+	 &(struct port_float_cfg) {.init = 0.3f,.id = MIDI_ID(MIDI_CH, 3),},},
+	{"root.poly.voice*.adsr:release",
+	 &(struct port_float_cfg) {.init = 0.3f,.id = MIDI_ID(MIDI_CH, 4),},},
+	{"root.pan:pan",
+	 &(struct port_float_cfg) {.init = 0.5f,.id = MIDI_ID(MIDI_CH, 7),},},
+	{"root.pan:vol",
+	 &(struct port_float_cfg) {.init = 0.8f,.id = MIDI_ID(MIDI_CH, 8),},},
 	SYNTH_CFG_EOL
 };
 
-static struct module *voice_osc(struct module *m, int id)
-{
+static struct module *voice_osc(struct module *m, int id) {
 	return module_new(m, "osc/sine", id);
 }
 
-static struct module *poly_voice(struct module *m, int id)
-{
+static struct module *poly_voice(struct module *m, int id) {
 	return module_new(m, "voice/osc", id, voice_osc);
 }
 
@@ -90,17 +86,16 @@ static struct module *poly_voice(struct module *m, int id)
 #elif defined(SYNTH_KS)
 
 static const struct synth_cfg cfg[] = {
-	{ "root.poly.ks*:attenuation",
-	  &(struct port_float_cfg){ .init = 1.f, .id = MIDI_ID(MIDI_CH, 1), }, },
-	{ "root.pan:pan",
-	  &(struct port_float_cfg){ .init = 0.5f, .id = MIDI_ID(MIDI_CH, 7), }, },
-	{ "root.pan:vol",
-	  &(struct port_float_cfg){ .init = 0.8f, .id = MIDI_ID(MIDI_CH, 8), }, },
+	{"root.poly.ks*:attenuation",
+	 &(struct port_float_cfg) {.init = 1.f,.id = MIDI_ID(MIDI_CH, 1),},},
+	{"root.pan:pan",
+	 &(struct port_float_cfg) {.init = 0.5f,.id = MIDI_ID(MIDI_CH, 7),},},
+	{"root.pan:vol",
+	 &(struct port_float_cfg) {.init = 0.8f,.id = MIDI_ID(MIDI_CH, 8),},},
 	SYNTH_CFG_EOL
 };
 
-static struct module *poly_voice(struct module *m, int id)
-{
+static struct module *poly_voice(struct module *m, int id) {
 	return module_new(m, "osc/ks", id);
 }
 
@@ -113,16 +108,15 @@ static struct module *poly_voice(struct module *m, int id)
  */
 
 struct poly {
-	struct module *poly;    /* polyphonic control */
-	struct module *pan;     /* ouput left/right panning */
+	struct module *poly;	/* polyphonic control */
+	struct module *pan;	/* ouput left/right panning */
 };
 
 /******************************************************************************
  * module port functions
  */
 
-static void poly_port_midi(struct module *m, const struct event *e)
-{
+static void poly_port_midi(struct module *m, const struct event *e) {
 	struct poly *this = (struct poly *)m->priv;
 	bool consumed = synth_midi_cc(m->top, e);
 
@@ -141,8 +135,7 @@ static void poly_port_midi(struct module *m, const struct event *e)
  * module functions
  */
 
-static int poly_alloc(struct module *m, va_list vargs)
-{
+static int poly_alloc(struct module *m, va_list vargs) {
 	struct module *poly = NULL;
 	struct module *pan = NULL;
 
@@ -176,15 +169,14 @@ static int poly_alloc(struct module *m, va_list vargs)
 
 	return 0;
 
-error:
+ error:
 	module_del(poly);
 	module_del(pan);
 	ggm_free(this);
 	return -1;
 }
 
-static void poly_free(struct module *m)
-{
+static void poly_free(struct module *m) {
 	struct poly *this = (struct poly *)m->priv;
 
 	module_del(this->poly);
@@ -192,8 +184,7 @@ static void poly_free(struct module *m)
 	ggm_free(this);
 }
 
-static bool poly_process(struct module *m, float *bufs[])
-{
+static bool poly_process(struct module *m, float *bufs[]) {
 	struct poly *this = (struct poly *)m->priv;
 	struct module *poly = this->poly;
 	struct module *pan = this->pan;
@@ -201,8 +192,8 @@ static bool poly_process(struct module *m, float *bufs[])
 	float *out1 = bufs[1];
 	float tmp[AudioBufferSize];
 
-	poly->info->process(poly, (float *[]){ tmp, });
-	pan->info->process(pan, (float *[]){ tmp, out0, out1, });
+	poly->info->process(poly, (float *[]) { tmp, });
+	pan->info->process(pan, (float *[]) { tmp, out0, out1, });
 	return true;
 }
 
@@ -211,13 +202,13 @@ static bool poly_process(struct module *m, float *bufs[])
  */
 
 static const struct port_info in_ports[] = {
-	{ .name = "midi", .type = PORT_TYPE_MIDI, .pf = poly_port_midi },
+	{.name = "midi",.type = PORT_TYPE_MIDI,.pf = poly_port_midi},
 	PORT_EOL,
 };
 
 static const struct port_info out_ports[] = {
-	{ .name = "out0", .type = PORT_TYPE_AUDIO },
-	{ .name = "out1", .type = PORT_TYPE_AUDIO },
+	{.name = "out0",.type = PORT_TYPE_AUDIO},
+	{.name = "out1",.type = PORT_TYPE_AUDIO},
 	PORT_EOL,
 };
 

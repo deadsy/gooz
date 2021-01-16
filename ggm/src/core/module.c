@@ -61,8 +61,7 @@ static const struct module_info *module_list[] = {
 };
 
 /* module_find finds a module by name */
-static const struct module_info *module_find(const char *name)
-{
+static const struct module_info *module_find(const char *name) {
 	const struct module_info *mi;
 	int i = 0;
 
@@ -80,8 +79,7 @@ static const struct module_info *module_find(const char *name)
  */
 
 /* module_name constructs the full path name of the module */
-static char *module_name(struct module *p, const char *iname, int id)
-{
+static char *module_name(struct module *p, const char *iname, int id) {
 	char name[128];
 
 	if (p == NULL) {
@@ -109,8 +107,7 @@ static char *module_name(struct module *p, const char *iname, int id)
 }
 
 /* module_create creates a module */
-static struct module *module_create(struct synth *s, struct module *p, const char *name, int id, va_list vargs)
-{
+static struct module *module_create(struct synth *s, struct module *p, const char *name, int id, va_list vargs) {
 	/* find the module */
 	const struct module_info *mi = module_find(name);
 
@@ -164,7 +161,7 @@ static struct module *module_create(struct synth *s, struct module *p, const cha
 
 	return m;
 
-error:
+ error:
 	LOG_ERR("could not create module %s", name);
 	if (m != NULL) {
 		ggm_free(m->dst);
@@ -179,8 +176,7 @@ error:
  */
 
 /* module_root creates an instance of a root module */
-struct module *module_root(struct synth *top, const char *name, int id, ...)
-{
+struct module *module_root(struct synth *top, const char *name, int id, ...) {
 	va_list vargs;
 
 	va_start(vargs, id);
@@ -190,8 +186,7 @@ struct module *module_root(struct synth *top, const char *name, int id, ...)
 }
 
 /* module_new returns a new instance of a module. */
-struct module *module_new(struct module *parent, const char *name, int id, ...)
-{
+struct module *module_new(struct module *parent, const char *name, int id, ...) {
 	va_list vargs;
 
 	va_start(vargs, id);
@@ -201,8 +196,7 @@ struct module *module_new(struct module *parent, const char *name, int id, ...)
 }
 
 /* module_del deallocates a module and it's sub-modules */
-void module_del(struct module *m)
-{
+void module_del(struct module *m) {
 	if (m == NULL) {
 		return;
 	}

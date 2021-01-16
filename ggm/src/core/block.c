@@ -18,32 +18,28 @@
 /*****************************************************************************/
 
 /* block_zero sets a buffer to zero */
-void block_zero(float *out)
-{
+void block_zero(float *out) {
 	for (size_t i = 0; i < AudioBufferSize; i++) {
 		out[i] = 0.f;
 	}
 }
 
 /* block_mul multiplies two buffers */
-void block_mul(float *out, float *buf)
-{
+void block_mul(float *out, float *buf) {
 	for (size_t i = 0; i < AudioBufferSize; i++) {
 		out[i] *= buf[i];
 	}
 }
 
 /* block_add adds two buffers */
-void block_add(float *out, float *buf)
-{
+void block_add(float *out, float *buf) {
 	for (size_t i = 0; i < AudioBufferSize; i++) {
 		out[i] += buf[i];
 	}
 }
 
 /* block_mul_k multiplies a block by a scalar */
-void block_mul_k(float *out, float k)
-{
+void block_mul_k(float *out, float k) {
 	size_t n = AudioBufferSize;
 
 	/* unroll x4 */
@@ -58,8 +54,7 @@ void block_mul_k(float *out, float k)
 }
 
 /* block_add_k adds a scalar to a buffer */
-void block_add_k(float *out, float k)
-{
+void block_add_k(float *out, float k) {
 	size_t n = AudioBufferSize;
 
 	/* unroll x4 */
@@ -74,8 +69,7 @@ void block_add_k(float *out, float k)
 }
 
 /* block_copy copies a block */
-void block_copy(float *dst, const float *src)
-{
+void block_copy(float *dst, const float *src) {
 	size_t n = AudioBufferSize;
 
 	/* unroll x4 */
@@ -91,8 +85,7 @@ void block_copy(float *dst, const float *src)
 }
 
 /* block_copy_mul_k copies a block and multiplies by k */
-void block_copy_mul_k(float *dst, const float *src, float k)
-{
+void block_copy_mul_k(float *dst, const float *src, float k) {
 	size_t n = AudioBufferSize;
 
 	/* unroll x4 */

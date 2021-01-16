@@ -13,18 +13,17 @@
  */
 
 struct mono {
-	uint8_t ch;             /* MIDI channel we are using */
-	uint8_t note;           /* the MIDI note for this voice */
-	float bend;             /* pitch bend value */
-	struct module *voice;   /* the voice module */
+	uint8_t ch;		/* MIDI channel we are using */
+	uint8_t note;		/* the MIDI note for this voice */
+	float bend;		/* pitch bend value */
+	struct module *voice;	/* the voice module */
 };
 
 /******************************************************************************
  * module port functions
  */
 
-static void mono_port_midi(struct module *m, const struct event *e)
-{
+static void mono_port_midi(struct module *m, const struct event *e) {
 	struct mono *this = (struct mono *)m->priv;
 	struct module *voice = this->voice;
 
@@ -35,38 +34,38 @@ static void mono_port_midi(struct module *m, const struct event *e)
 
 	switch (event_get_midi_msg(e)) {
 
-	case MIDI_STATUS_NOTEON: {
-		uint8_t note = event_get_midi_note(e);
-		float vel = event_get_midi_velocity_float(e);
-		if (note != this->note) {
-			/* set the note */
-			event_in_float(voice, "note", (float)note + this->bend, NULL);
-			this->note = note;
+	case MIDI_STATUS_NOTEON:{
+			uint8_t note = event_get_midi_note(e);
+			float vel = event_get_midi_velocity_float(e);
+			if (note != this->note) {
+				/* set the note */
+				event_in_float(voice, "note", (float)note + this->bend, NULL);
+				this->note = note;
+			}
+			/* note: vel = 0 is the same as note off (gate=0) */
+			event_in_float(voice, "gate", vel, NULL);
+			break;
 		}
-		/* note: vel = 0 is the same as note off (gate=0) */
-		event_in_float(voice, "gate", vel, NULL);
-		break;
-	}
 
-	case MIDI_STATUS_NOTEOFF: {
-		/* send a note off control event, ignore the note off velocity (for now) */
-		event_in_float(voice, "gate", 0.f, NULL);
-		break;
-	}
+	case MIDI_STATUS_NOTEOFF:{
+			/* send a note off control event, ignore the note off velocity (for now) */
+			event_in_float(voice, "gate", 0.f, NULL);
+			break;
+		}
 
-	case MIDI_STATUS_PITCHWHEEL: {
-		/* get the pitch bend value */
-		this->bend = midi_pitch_bend(event_get_midi_pitch_wheel(e));
-		/* update the voice */
-		event_in_float(voice, "note", (float)(this->note) + this->bend, NULL);
-		break;
-	}
+	case MIDI_STATUS_PITCHWHEEL:{
+			/* get the pitch bend value */
+			this->bend = midi_pitch_bend(event_get_midi_pitch_wheel(e));
+			/* update the voice */
+			event_in_float(voice, "note", (float)(this->note) + this->bend, NULL);
+			break;
+		}
 
-	default: {
-		/* pass through the MIDI event to the voice */
-		event_in(voice, "midi", e, NULL);
-		break;
-	}
+	default:{
+			/* pass through the MIDI event to the voice */
+			event_in(voice, "midi", e, NULL);
+			break;
+		}
 
 	}
 }
@@ -75,8 +74,7 @@ static void mono_port_midi(struct module *m, const struct event *e)
  * module functions
  */
 
-static int mono_alloc(struct module *m, va_list vargs)
-{
+static int mono_alloc(struct module *m, va_list vargs) {
 	/* allocate the private data */
 	struct mono *this = ggm_calloc(1, sizeof(struct mono));
 
@@ -97,27 +95,25 @@ static int mono_alloc(struct module *m, va_list vargs)
 
 	return 0;
 
-error:
+ error:
 	module_del(this->voice);
 	ggm_free(this);
 	return -1;
 }
 
-static void mono_free(struct module *m)
-{
+static void mono_free(struct module *m) {
 	struct mono *this = (struct mono *)m->priv;
 
 	module_del(this->voice);
 	ggm_free(this);
 }
 
-static bool mono_process(struct module *m, float *bufs[])
-{
+static bool mono_process(struct module *m, float *bufs[]) {
 	struct mono *this = (struct mono *)m->priv;
 	struct module *voice = this->voice;
 	float *out = bufs[0];
 
-	return voice->info->process(voice, (float *[]){ out, });
+	return voice->info->process(voice, (float *[]) { out, });
 }
 
 /******************************************************************************
@@ -125,12 +121,12 @@ static bool mono_process(struct module *m, float *bufs[])
  */
 
 static const struct port_info in_ports[] = {
-	{ .name = "midi", .type = PORT_TYPE_MIDI, .pf = mono_port_midi },
+	{.name = "midi",.type = PORT_TYPE_MIDI,.pf = mono_port_midi},
 	PORT_EOL,
 };
 
 static const struct port_info out_ports[] = {
-	{ .name = "out", .type = PORT_TYPE_AUDIO, },
+	{.name = "out",.type = PORT_TYPE_AUDIO,},
 	PORT_EOL,
 };
 

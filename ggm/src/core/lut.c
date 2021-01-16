@@ -52,8 +52,7 @@ static const float COS_LUT_data[COS_LUT_SIZE << 1] = {
 #define FRAC_MASK ((1U << FRAC_BITS) - 1)
 #define FRAC_SCALE (1.f / (float)FRAC_MASK)
 
-float cos_lookup(uint32_t x)
-{
+float cos_lookup(uint32_t x) {
 	uint32_t idx = (x >> FRAC_BITS) << 1;
 	float frac = (x & FRAC_MASK) * FRAC_SCALE;
 	float y = COS_LUT_data[idx];
@@ -81,8 +80,7 @@ static const uint16_t exp1_table[64] = {
 };
 
 /* pow2_int returns powf(2.f, x) where x is an integer [-126,127] */
-static float pow2_int(int x)
-{
+static float pow2_int(int x) {
 	union {
 		unsigned int ui;
 		float f;
@@ -94,8 +92,7 @@ static float pow2_int(int x)
 }
 
 /* pow2_frac returns powf(2.f, x) where x = [0,1) */
-static float pow2_frac(float x)
-{
+static float pow2_frac(float x) {
 	int n = (int)(x * (float)(1U << 12));
 	uint16_t x0 = exp0_table[(n >> 6) & 0x3f];
 	uint16_t x1 = exp1_table[n & 0x3f];
@@ -104,8 +101,7 @@ static float pow2_frac(float x)
 }
 
 /* pow2 returns powf(2.f, x) */
-float pow2(float x)
-{
+float pow2(float x) {
 	float nf = truncf(x);
 	float ff = x - nf;
 

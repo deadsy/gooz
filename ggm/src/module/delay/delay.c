@@ -13,10 +13,10 @@
  */
 
 struct delay {
-	float *buf;     /* delay line buffer */
-	float t;        /* delay line length (secs) */
-	int n;          /* delay line length (samples) */
-	int wr;         /* write index */
+	float *buf;		/* delay line buffer */
+	float t;		/* delay line length (secs) */
+	int n;			/* delay line length (samples) */
+	int wr;			/* write index */
 };
 
 /******************************************************************************
@@ -27,8 +27,7 @@ struct delay {
  * module functions
  */
 
-static int delay_alloc(struct module *m, va_list vargs)
-{
+static int delay_alloc(struct module *m, va_list vargs) {
 	/* allocate the private data */
 	struct delay *this = ggm_calloc(1, sizeof(struct delay));
 
@@ -57,23 +56,21 @@ static int delay_alloc(struct module *m, va_list vargs)
 
 	return 0;
 
-error:
+ error:
 
 	ggm_free(this->buf);
 	ggm_free(this);
 	return -1;
 }
 
-static void delay_free(struct module *m)
-{
+static void delay_free(struct module *m) {
 	struct delay *this = (struct delay *)m->priv;
 
 	ggm_free(this->buf);
 	ggm_free(this);
 }
 
-static bool delay_process(struct module *m, float *bufs[])
-{
+static bool delay_process(struct module *m, float *bufs[]) {
 	struct delay *this = (struct delay *)m->priv;
 	float *in = bufs[0];
 	float *out = bufs[1];
@@ -102,12 +99,12 @@ static bool delay_process(struct module *m, float *bufs[])
  */
 
 static const struct port_info in_ports[] = {
-	{ .name = "in", .type = PORT_TYPE_AUDIO, },
+	{.name = "in",.type = PORT_TYPE_AUDIO,},
 	PORT_EOL,
 };
 
 static const struct port_info out_ports[] = {
-	{ .name = "out", .type = PORT_TYPE_AUDIO, },
+	{.name = "out",.type = PORT_TYPE_AUDIO,},
 	PORT_EOL,
 };
 

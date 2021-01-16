@@ -39,8 +39,7 @@ typedef union {
  * 32-bit float truncation.
  */
 
-float truncf(float x)
-{
+float truncf(float x) {
 	int32_t signbit, w, exponent_less_127;
 
 	GET_FLOAT_WORD(w, x);
@@ -73,8 +72,7 @@ float truncf(float x)
  * 32-bit float absolute values
  */
 
-float fabsf(float x)
-{
+float fabsf(float x) {
 	union {
 		unsigned int ui;
 		float f;
@@ -89,8 +87,7 @@ float fabsf(float x)
  * is not-a-number
  */
 
-int isnanf(float x)
-{
+int isnanf(float x) {
 	int32_t ix;
 
 	GET_FLOAT_WORD(ix, x);
@@ -102,8 +99,7 @@ int isnanf(float x)
  * is infinite
  */
 
-int isinff(float x)
-{
+int isinff(float x) {
 	int32_t ix;
 
 	GET_FLOAT_WORD(ix, x);
@@ -116,22 +112,19 @@ int isinff(float x)
  * These are LUT based and are less accurate but faster than typical libm functions.
  */
 
-float cosf(float x)
-{
+float cosf(float x) {
 	uint32_t xi = (uint32_t) (fabsf(x) * PhaseScale);
 
 	return cos_lookup(xi);
 }
 
-float sinf(float x)
-{
+float sinf(float x) {
 	uint32_t xi = QuarterCycle - (uint32_t) (fabsf(x) * PhaseScale);
 
 	return cos_lookup(xi);
 }
 
-float tanf(float x)
-{
+float tanf(float x) {
 	return sinf(x) / cosf(x);
 }
 
@@ -140,10 +133,9 @@ float tanf(float x)
  * powe returns powf(e, x)
  */
 
-#define LOG_E2 (1.4426950408889634f)    /* 1.0 / math.log(2.0) */
+#define LOG_E2 (1.4426950408889634f)	/* 1.0 / math.log(2.0) */
 
-float powe(float x)
-{
+float powe(float x) {
 	return pow2(LOG_E2 * x);
 }
 

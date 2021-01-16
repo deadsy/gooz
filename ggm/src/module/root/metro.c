@@ -9,7 +9,6 @@
 #include "ggm.h"
 #include "seq/seq.h"
 
-
 /******************************************************************************
  * MIDI setup
  */
@@ -17,18 +16,18 @@
 #define MIDI_CH 0
 
 static const struct synth_cfg cfg[] = {
-	{ "root.mono.voice.adsr:attack",
-	  &(struct port_float_cfg){ .init = 0.1f, .id = MIDI_ID(MIDI_CH, 1), }, },
-	{ "root.mono.voice.adsr:decay",
-	  &(struct port_float_cfg){ .init = 0.5f, .id = MIDI_ID(MIDI_CH, 2), }, },
-	{ "root.mono.voice.adsr:sustain",
-	  &(struct port_float_cfg){ .init = 0.8f, .id = MIDI_ID(MIDI_CH, 3), }, },
-	{ "root.mono.voice.adsr:release",
-	  &(struct port_float_cfg){ .init = 1.f, .id = MIDI_ID(MIDI_CH, 4), }, },
-	{ "root.seq:bpm",
-	  &(struct port_float_cfg){ .init = 60.f, .id = MIDI_ID(MIDI_CH, 7), }, },
-	{ "root.pan:vol",
-	  &(struct port_float_cfg){ .init = 0.8f, .id = MIDI_ID(MIDI_CH, 8), }, },
+	{"root.mono.voice.adsr:attack",
+	 &(struct port_float_cfg) {.init = 0.1f,.id = MIDI_ID(MIDI_CH, 1),},},
+	{"root.mono.voice.adsr:decay",
+	 &(struct port_float_cfg) {.init = 0.5f,.id = MIDI_ID(MIDI_CH, 2),},},
+	{"root.mono.voice.adsr:sustain",
+	 &(struct port_float_cfg) {.init = 0.8f,.id = MIDI_ID(MIDI_CH, 3),},},
+	{"root.mono.voice.adsr:release",
+	 &(struct port_float_cfg) {.init = 1.f,.id = MIDI_ID(MIDI_CH, 4),},},
+	{"root.seq:bpm",
+	 &(struct port_float_cfg) {.init = 60.f,.id = MIDI_ID(MIDI_CH, 7),},},
+	{"root.pan:vol",
+	 &(struct port_float_cfg) {.init = 0.8f,.id = MIDI_ID(MIDI_CH, 8),},},
 	SYNTH_CFG_EOL
 };
 
@@ -54,18 +53,16 @@ static const uint8_t signature_4_4[] = {
  */
 
 struct metro {
-	struct module *seq;     /* sequencer */
-	struct module *mono;    /* monophonic voice for audio output */
-	struct module *pan;     /* mix mono to stereo output */
+	struct module *seq;	/* sequencer */
+	struct module *mono;	/* monophonic voice for audio output */
+	struct module *pan;	/* mix mono to stereo output */
 };
 
-static struct module *voice_osc0(struct module *m, int id)
-{
+static struct module *voice_osc0(struct module *m, int id) {
 	return module_new(m, "osc/sine", id);
 }
 
-static struct module *mono_voice0(struct module *m, int id)
-{
+static struct module *mono_voice0(struct module *m, int id) {
 	return module_new(m, "voice/osc", id, voice_osc0);
 }
 
@@ -73,8 +70,7 @@ static struct module *mono_voice0(struct module *m, int id)
  * module port functions
  */
 
-static void metro_port_midi(struct module *m, const struct event *e)
-{
+static void metro_port_midi(struct module *m, const struct event *e) {
 	/* consume external cc events */
 	synth_midi_cc(m->top, e);
 }
@@ -83,8 +79,7 @@ static void metro_port_midi(struct module *m, const struct event *e)
  * module functions
  */
 
-static int metro_alloc(struct module *m, va_list vargs)
-{
+static int metro_alloc(struct module *m, va_list vargs) {
 	struct module *seq = NULL;
 	struct module *mono = NULL;
 	struct module *pan = NULL;
@@ -134,7 +129,7 @@ static int metro_alloc(struct module *m, va_list vargs)
 
 	return 0;
 
-error:
+ error:
 	module_del(seq);
 	module_del(mono);
 	module_del(pan);
@@ -142,8 +137,7 @@ error:
 	return -1;
 }
 
-static void metro_free(struct module *m)
-{
+static void metro_free(struct module *m) {
 	struct metro *this = (struct metro *)m->priv;
 
 	module_del(this->seq);
@@ -152,8 +146,7 @@ static void metro_free(struct module *m)
 	ggm_free(this);
 }
 
-static bool metro_process(struct module *m, float *bufs[])
-{
+static bool metro_process(struct module *m, float *bufs[]) {
 	struct metro *this = (struct metro *)m->priv;
 	struct module *seq = this->seq;
 	struct module *mono = this->mono;
@@ -161,12 +154,12 @@ static bool metro_process(struct module *m, float *bufs[])
 
 	seq->info->process(seq, NULL);
 
-	bool active = mono->info->process(mono, (float *[]){ tmp, });
+	bool active = mono->info->process(mono, (float *[]) { tmp, });
 	if (active) {
 		struct module *pan = this->pan;
 		float *out0 = bufs[0];
 		float *out1 = bufs[1];
-		pan->info->process(pan, (float *[]){ tmp, out0, out1, });
+		pan->info->process(pan, (float *[]) { tmp, out0, out1, });
 	}
 
 	return active;
@@ -177,14 +170,14 @@ static bool metro_process(struct module *m, float *bufs[])
  */
 
 static const struct port_info in_ports[] = {
-	{ .name = "midi", .type = PORT_TYPE_MIDI, .pf = metro_port_midi },
+	{.name = "midi",.type = PORT_TYPE_MIDI,.pf = metro_port_midi},
 	PORT_EOL,
 };
 
 static const struct port_info out_ports[] = {
-	{ .name = "midi", .type = PORT_TYPE_MIDI, },
-	{ .name = "out0", .type = PORT_TYPE_AUDIO },
-	{ .name = "out1", .type = PORT_TYPE_AUDIO },
+	{.name = "midi",.type = PORT_TYPE_MIDI,},
+	{.name = "out0",.type = PORT_TYPE_AUDIO},
+	{.name = "out1",.type = PORT_TYPE_AUDIO},
 	PORT_EOL,
 };
 

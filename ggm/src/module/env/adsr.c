@@ -13,7 +13,7 @@
  */
 
 enum adsr_state {
-	ADSR_STATE_IDLE = 0, /* initial state */
+	ADSR_STATE_IDLE = 0,	/* initial state */
 	ADSR_STATE_ATTACK,
 	ADSR_STATE_DECAY,
 	ADSR_STATE_SUSTAIN,
@@ -22,16 +22,16 @@ enum adsr_state {
 };
 
 struct adsr {
-	enum adsr_state state;          /* envelope state */
-	float s;                        /* sustain level */
-	float ka;                       /* attack constant */
-	float kd;                       /* decay constant */
-	float kr;                       /* release constant */
-	float k_reset;                  /* soft reset constant */
-	float d_trigger;                /* attack->decay trigger level */
-	float s_trigger;                /* decay->sustain trigger level */
-	float i_trigger;                /* release->idle trigger level */
-	float val;                      /* output value */
+	enum adsr_state state;	/* envelope state */
+	float s;		/* sustain level */
+	float ka;		/* attack constant */
+	float kd;		/* decay constant */
+	float kr;		/* release constant */
+	float k_reset;		/* soft reset constant */
+	float d_trigger;	/* attack->decay trigger level */
+	float s_trigger;	/* decay->sustain trigger level */
+	float i_trigger;	/* release->idle trigger level */
+	float val;		/* output value */
 };
 
 /* When we need to shutdown a voice we do it slowly to avoid any clicks in
@@ -53,11 +53,10 @@ struct adsr {
  */
 
 #define LEVEL_EPSILON (0.001f)
-#define LN_LEVEL_EPSILON (-6.9077553f)  /* ln(LEVEL_EPSILON) */
+#define LN_LEVEL_EPSILON (-6.9077553f)	/* ln(LEVEL_EPSILON) */
 
 /* Return a k value to give the exponential rise/fall in the required time. */
-static float get_k(float t, int rate)
-{
+static float get_k(float t, int rate) {
 	if (t <= 0.f) {
 		return 1.f;
 	}
@@ -68,8 +67,7 @@ static float get_k(float t, int rate)
  * MIDI to port event conversion functions
  */
 
-static void adsr_midi_attack(struct event *dst, const struct event *src)
-{
+static void adsr_midi_attack(struct event *dst, const struct event *src) {
 	/* MIN_ATTACK_TIME..1 secs */
 	float x = event_get_midi_cc_float(src);
 
@@ -77,8 +75,7 @@ static void adsr_midi_attack(struct event *dst, const struct event *src)
 	event_set_float(dst, x);
 }
 
-static void adsr_midi_decay(struct event *dst, const struct event *src)
-{
+static void adsr_midi_decay(struct event *dst, const struct event *src) {
 	/* MIN_DECAY_TIME..2 secs */
 	float x = event_get_midi_cc_float(src);
 
@@ -86,14 +83,12 @@ static void adsr_midi_decay(struct event *dst, const struct event *src)
 	event_set_float(dst, x);
 }
 
-static void adsr_midi_sustain(struct event *dst, const struct event *src)
-{
-	/* 0..1 level*/
+static void adsr_midi_sustain(struct event *dst, const struct event *src) {
+	/* 0..1 level */
 	event_set_float(dst, event_get_midi_cc_float(src));
 }
 
-static void adsr_midi_release(struct event *dst, const struct event *src)
-{
+static void adsr_midi_release(struct event *dst, const struct event *src) {
 	/* MIN_RELEASE_TIME..1 secs */
 	float x = event_get_midi_cc_float(src);
 
@@ -106,8 +101,7 @@ static void adsr_midi_release(struct event *dst, const struct event *src)
  */
 
 /* adsr_port_reset resets the state of the envelope */
-static void adsr_port_reset(struct module *m, const struct event *e)
-{
+static void adsr_port_reset(struct module *m, const struct event *e) {
 	struct adsr *this = (struct adsr *)m->priv;
 	bool reset = event_get_bool(e);
 
@@ -130,8 +124,7 @@ static void adsr_port_reset(struct module *m, const struct event *e)
 }
 
 /* adsr_port_gate is the envelope gate control, attack(>0) or release(=0) */
-static void adsr_port_gate(struct module *m, const struct event *e)
-{
+static void adsr_port_gate(struct module *m, const struct event *e) {
 	struct adsr *this = (struct adsr *)m->priv;
 	float gate = event_get_float(e);
 
@@ -156,8 +149,7 @@ static void adsr_port_gate(struct module *m, const struct event *e)
 }
 
 /* adsr_port_attack sets the attack time (secs) */
-static void adsr_port_attack(struct module *m, const struct event *e)
-{
+static void adsr_port_attack(struct module *m, const struct event *e) {
 	struct adsr *this = (struct adsr *)m->priv;
 	float attack = clampf_lo(event_get_float(e), MIN_ATTACK_TIME);
 
@@ -166,8 +158,7 @@ static void adsr_port_attack(struct module *m, const struct event *e)
 }
 
 /* adsr_port_decay sets the decay time (secs) */
-static void adsr_port_decay(struct module *m, const struct event *e)
-{
+static void adsr_port_decay(struct module *m, const struct event *e) {
 	struct adsr *this = (struct adsr *)m->priv;
 	float decay = clampf_lo(event_get_float(e), MIN_DECAY_TIME);
 
@@ -176,8 +167,7 @@ static void adsr_port_decay(struct module *m, const struct event *e)
 }
 
 /* adsr_port_sustain sets the sustain level 0..1 */
-static void adsr_port_sustain(struct module *m, const struct event *e)
-{
+static void adsr_port_sustain(struct module *m, const struct event *e) {
 	struct adsr *this = (struct adsr *)m->priv;
 	float sustain = clampf(event_get_float(e), 0.f, 1.f);
 
@@ -189,8 +179,7 @@ static void adsr_port_sustain(struct module *m, const struct event *e)
 }
 
 /* adsr_port_release sets the release time (secs) */
-static void adsr_port_release(struct module *m, const struct event *e)
-{
+static void adsr_port_release(struct module *m, const struct event *e) {
 	struct adsr *this = (struct adsr *)m->priv;
 	float release = clampf_lo(event_get_float(e), MIN_RELEASE_TIME);
 
@@ -202,8 +191,7 @@ static void adsr_port_release(struct module *m, const struct event *e)
  * module functions
  */
 
-static int adsr_alloc(struct module *m, va_list vargs)
-{
+static int adsr_alloc(struct module *m, va_list vargs) {
 	/* allocate the private data */
 	struct adsr *this = ggm_calloc(1, sizeof(struct adsr));
 
@@ -218,13 +206,11 @@ static int adsr_alloc(struct module *m, va_list vargs)
 	return 0;
 }
 
-static void adsr_free(struct module *m)
-{
+static void adsr_free(struct module *m) {
 	ggm_free(m->priv);
 }
 
-static bool adsr_process(struct module *m, float *buf[])
-{
+static bool adsr_process(struct module *m, float *buf[]) {
 	struct adsr *this = (struct adsr *)m->priv;
 	float *out = buf[0];
 
@@ -311,17 +297,17 @@ static bool adsr_process(struct module *m, float *buf[])
  */
 
 static const struct port_info in_ports[] = {
-	{ .name = "reset", .type = PORT_TYPE_BOOL, .pf = adsr_port_reset },
-	{ .name = "gate", .type = PORT_TYPE_FLOAT, .pf = adsr_port_gate },
-	{ .name = "attack", .type = PORT_TYPE_FLOAT, .pf = adsr_port_attack, .mf = adsr_midi_attack, },
-	{ .name = "decay", .type = PORT_TYPE_FLOAT, .pf = adsr_port_decay, .mf = adsr_midi_decay, },
-	{ .name = "sustain", .type = PORT_TYPE_FLOAT, .pf = adsr_port_sustain, .mf = adsr_midi_sustain, },
-	{ .name = "release", .type = PORT_TYPE_FLOAT, .pf = adsr_port_release, .mf = adsr_midi_release, },
+	{.name = "reset",.type = PORT_TYPE_BOOL,.pf = adsr_port_reset},
+	{.name = "gate",.type = PORT_TYPE_FLOAT,.pf = adsr_port_gate},
+	{.name = "attack",.type = PORT_TYPE_FLOAT,.pf = adsr_port_attack,.mf = adsr_midi_attack,},
+	{.name = "decay",.type = PORT_TYPE_FLOAT,.pf = adsr_port_decay,.mf = adsr_midi_decay,},
+	{.name = "sustain",.type = PORT_TYPE_FLOAT,.pf = adsr_port_sustain,.mf = adsr_midi_sustain,},
+	{.name = "release",.type = PORT_TYPE_FLOAT,.pf = adsr_port_release,.mf = adsr_midi_release,},
 	PORT_EOL,
 };
 
 static const struct port_info out_ports[] = {
-	{ .name = "out", .type = PORT_TYPE_AUDIO, },
+	{.name = "out",.type = PORT_TYPE_AUDIO,},
 	PORT_EOL,
 };
 

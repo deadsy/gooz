@@ -79,6 +79,7 @@ COPY_CMD = tar cf - -C files . | tar xf - -C $(SRC_DIR)
 .PHONY: all
 all: .stamp_output
 
+
 .stamp_output: .stamp_xtools .stamp_build
 	mkdir -p $(OUTPUT_DIR)
 	cp $(GGM_BUILD)/zephyr/zephyr.* $(OUTPUT_DIR)
@@ -117,6 +118,10 @@ clean:
 .PHONY: clobber
 clobber: clean
 	-rm -rf $(XTOOLS_DIR) .stamp_xtools
+
+.PHONY: program
+program:
+	st-flash write $(OUTPUT_DIR)/zephyr.bin 0x08000000
 
 $(ZEPHYR_TGZ):
 	mkdir -p $(DL_DIR)

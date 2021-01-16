@@ -28,18 +28,15 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 LOG_MODULE_DECLARE(LOG_MODULE_NAME);
 #endif
 
-static inline void ggm_mdelay(long ms)
-{
+static inline void ggm_mdelay(long ms) {
 	k_sleep(K_MSEC(ms));
 }
 
-static inline void *ggm_calloc(size_t num, size_t size)
-{
+static inline void *ggm_calloc(size_t num, size_t size) {
 	return k_calloc(num, size);
 }
 
-static inline void ggm_free(void *ptr)
-{
+static inline void ggm_free(void *ptr) {
 	k_free(ptr);
 }
 
@@ -57,8 +54,7 @@ static inline void ggm_free(void *ptr)
 #define LOG_ERR log_error
 #define LOG_WRN log_warn
 
-static inline const char *log_strdup(const char *s)
-{
+static inline const char *log_strdup(const char *s) {
 	return s;
 }
 
@@ -74,6 +70,6 @@ void ggm_free(void *ptr);
 
 /*****************************************************************************/
 
-#endif /* GGM_SRC_INC_OSAL_H */
+#endif				/* GGM_SRC_INC_OSAL_H */
 
 /*****************************************************************************/

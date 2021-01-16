@@ -12,28 +12,28 @@
  */
 
 enum {
-	SEQ_STATE_STOP, /* initial state */
+	SEQ_STATE_STOP,		/* initial state */
 	SEQ_STATE_RUN,
 };
 
 enum {
-	OP_STATE_INIT, /* initial state */
+	OP_STATE_INIT,		/* initial state */
 	OP_STATE_WAIT,
 };
 
 struct seq_sm {
-	uint8_t *prog;          /* program operations */
-	int pc;                 /* program counter */
-	int seq_state;          /* sequencer state */
-	int op_state;           /* operation state */
-	int duration;           /* operation duration */
+	uint8_t *prog;		/* program operations */
+	int pc;			/* program counter */
+	int seq_state;		/* sequencer state */
+	int op_state;		/* operation state */
+	int duration;		/* operation duration */
 };
 
 struct seq {
-	float secs_per_tick;    /* seconds per tick */
-	float tick_error;       /* current tick error*/
-	uint32_t ticks;         /* full ticks*/
-	struct seq_sm sm;       /* state machine */
+	float secs_per_tick;	/* seconds per tick */
+	float tick_error;	/* current tick error */
+	uint32_t ticks;		/* full ticks */
+	struct seq_sm sm;	/* state machine */
 };
 
 /******************************************************************************
@@ -54,14 +54,12 @@ struct rest_args {
 };
 
 /* op_nop is a no operation (op) */
-static int op_nop(struct module *m)
-{
+static int op_nop(struct module *m) {
 	return 1;
 }
 
 /* op_loop returns to the beginning of the program (op) */
-static int op_loop(struct module *m)
-{
+static int op_loop(struct module *m) {
 	struct seq *this = (struct seq *)m->priv;
 	struct seq_sm *sm = &this->sm;
 
@@ -70,8 +68,7 @@ static int op_loop(struct module *m)
 }
 
 /* op_note generates note on/off events (op, channel, note, velocity, duration) */
-static int op_note(struct module *m)
-{
+static int op_note(struct module *m) {
 	struct seq *this = (struct seq *)m->priv;
 	struct seq_sm *sm = &this->sm;
 	struct note_args *args = (struct note_args *)&sm->prog[sm->pc];
@@ -100,8 +97,7 @@ static int op_note(struct module *m)
 }
 
 /* op_rest rests for a duration (op, duration) */
-static int op_rest(struct module *m)
-{
+static int op_rest(struct module *m) {
 	struct seq *this = (struct seq *)m->priv;
 	struct seq_sm *sm = &this->sm;
 	struct rest_args *args = (struct rest_args *)&sm->prog[sm->pc];
@@ -121,15 +117,14 @@ static int op_rest(struct module *m)
 	return 0;
 }
 
-static int (*op_table[SEQ_OP_NUM]) (struct module *m) = {
-	op_nop,                 /* SEQ_OP_NOP */
-	op_loop,                /* SEQ_OP_LOOP */
-	op_note,                /* SEQ_OP_NOTE */
-	op_rest,                /* SEQ_OP_REST */
+static int (*op_table[SEQ_OP_NUM])(struct module * m) = {
+	op_nop,			/* SEQ_OP_NOP */
+	op_loop,		/* SEQ_OP_LOOP */
+	op_note,		/* SEQ_OP_NOTE */
+	op_rest,		/* SEQ_OP_REST */
 };
 
-static void seq_tick(struct module *m)
-{
+static void seq_tick(struct module *m) {
 	struct seq *this = (struct seq *)m->priv;
 	struct seq_sm *sm = &this->sm;
 
@@ -139,7 +134,7 @@ static void seq_tick(struct module *m)
 	}
 	/* run the program */
 	if (sm->seq_state == SEQ_STATE_RUN) {
-		int (*op) (struct module *m) = op_table[sm->prog[sm->pc]];
+		int (*op)(struct module * m) = op_table[sm->prog[sm->pc]];
 		sm->pc += op(m);
 	}
 }
@@ -150,13 +145,11 @@ static void seq_tick(struct module *m)
 
 #define TICKS_PER_BEAT (16.0f)
 
-static void seq_midi_bpm(struct event *dst, const struct event *src)
-{
+static void seq_midi_bpm(struct event *dst, const struct event *src) {
 	event_set_float(dst, map_lin(event_get_midi_cc_float(src), MinBeatsPerMin, MaxBeatsPerMin));
 }
 
-static void seq_port_bpm(struct module *m, const struct event *e)
-{
+static void seq_port_bpm(struct module *m, const struct event *e) {
 	struct seq *this = (struct seq *)m->priv;
 	float bpm = clampf(event_get_float(e), MinBeatsPerMin, MaxBeatsPerMin);
 
@@ -164,22 +157,21 @@ static void seq_port_bpm(struct module *m, const struct event *e)
 	this->secs_per_tick = SecsPerMin / (bpm * TICKS_PER_BEAT);
 }
 
-static void seq_port_ctrl(struct module *m, const struct event *e)
-{
+static void seq_port_ctrl(struct module *m, const struct event *e) {
 	struct seq *this = (struct seq *)m->priv;
 	struct seq_sm *sm = &this->sm;
 	int ctrl = event_get_int(e);
 
 	switch (ctrl) {
-	case SEQ_CTRL_STOP: /* stop the sequencer */
+	case SEQ_CTRL_STOP:	/* stop the sequencer */
 		LOG_INF("%s:ctrl stop", m->name);
 		sm->seq_state = SEQ_STATE_STOP;
 		break;
-	case SEQ_CTRL_START: /* start the sequencer */
+	case SEQ_CTRL_START:	/* start the sequencer */
 		LOG_INF("%s:ctrl start", m->name);
 		sm->seq_state = SEQ_STATE_RUN;
 		break;
-	case SEQ_CTRL_RESET: /* reset the sequencer */
+	case SEQ_CTRL_RESET:	/* reset the sequencer */
 		LOG_INF("%s:ctrl reset", m->name);
 		sm->seq_state = SEQ_STATE_STOP;
 		sm->op_state = OP_STATE_INIT;
@@ -195,8 +187,7 @@ static void seq_port_ctrl(struct module *m, const struct event *e)
  * module functions
  */
 
-static int seq_alloc(struct module *m, va_list vargs)
-{
+static int seq_alloc(struct module *m, va_list vargs) {
 	/* allocate the private data */
 	struct seq *this = ggm_calloc(1, sizeof(struct seq));
 
@@ -212,13 +203,11 @@ static int seq_alloc(struct module *m, va_list vargs)
 	return 0;
 }
 
-static void seq_free(struct module *m)
-{
+static void seq_free(struct module *m) {
 	ggm_free(m->priv);
 }
 
-static bool seq_process(struct module *m, float *buf[])
-{
+static bool seq_process(struct module *m, float *buf[]) {
 	struct seq *this = (struct seq *)m->priv;
 
 	/* This routine is being used as a periodic call for timed event generation.
@@ -243,13 +232,13 @@ static bool seq_process(struct module *m, float *buf[])
  */
 
 static const struct port_info in_ports[] = {
-	{ .name = "bpm", .type = PORT_TYPE_FLOAT, .pf = seq_port_bpm, .mf = seq_midi_bpm, },
-	{ .name = "ctrl", .type = PORT_TYPE_INT, .pf = seq_port_ctrl },
+	{.name = "bpm",.type = PORT_TYPE_FLOAT,.pf = seq_port_bpm,.mf = seq_midi_bpm,},
+	{.name = "ctrl",.type = PORT_TYPE_INT,.pf = seq_port_ctrl},
 	PORT_EOL,
 };
 
 static const struct port_info out_ports[] = {
-	{ .name = "midi", .type = PORT_TYPE_MIDI, },
+	{.name = "midi",.type = PORT_TYPE_MIDI,},
 	PORT_EOL,
 };
 

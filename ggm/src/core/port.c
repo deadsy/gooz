@@ -11,8 +11,7 @@
  */
 
 /* port_count returns the number of ports */
-unsigned int port_count(const struct port_info port[])
-{
+unsigned int port_count(const struct port_info port[]) {
 	unsigned int i = 0;
 
 	if (port == NULL) {
@@ -25,8 +24,7 @@ unsigned int port_count(const struct port_info port[])
 }
 
 /* port_count_by_type returns the number of ports of a given type */
-unsigned int port_count_by_type(const struct port_info port[], enum port_type type)
-{
+unsigned int port_count_by_type(const struct port_info port[], enum port_type type) {
 	int i = 0;
 	unsigned int n = 0;
 
@@ -47,11 +45,7 @@ unsigned int port_count_by_type(const struct port_info port[], enum port_type ty
  */
 
 /* port_get_index returns the array index of a named port */
-int port_get_index(
-	const struct port_info port[],
-	const char *name
-	)
-{
+int port_get_index(const struct port_info port[], const char *name) {
 	int i = 0;
 
 	while (port[i].type != PORT_TYPE_NULL) {
@@ -64,22 +58,14 @@ int port_get_index(
 }
 
 /* port_get_info returns the port info of a named port */
-const struct port_info *port_get_info(
-	const struct port_info port[],
-	const char *name
-	)
-{
+const struct port_info *port_get_info(const struct port_info port[], const char *name) {
 	int i = port_get_index(port, name);
 
 	return (i >= 0) ? &port[i] : NULL;
 }
 
 /* port_get_index_by_type gets the index of the n-th port of a given type */
-int port_get_index_by_type(
-	const struct port_info port[],
-	enum port_type type,
-	size_t n)
-{
+int port_get_index_by_type(const struct port_info port[], enum port_type type, size_t n) {
 	unsigned int k = 0;
 	int i = 0;
 
@@ -96,12 +82,7 @@ int port_get_index_by_type(
 }
 
 /* port_get_info_by_type returns the port info of the n-th port of a given type */
-const struct port_info *port_get_info_by_type(
-	const struct port_info port[],
-	enum port_type type,
-	size_t n
-	)
-{
+const struct port_info *port_get_info_by_type(const struct port_info port[], enum port_type type, size_t n) {
 	int i = port_get_index_by_type(port, type, n);
 
 	return (i >= 0) ? &port[i] : NULL;
@@ -116,43 +97,35 @@ const struct port_info *port_get_info_by_type(
 
 #define NUM_PORT_FWD 8
 
-static void port_fwd_0(struct module *m, const struct event *e)
-{
+static void port_fwd_0(struct module *m, const struct event *e) {
 	event_out(m, 0, e);
 }
 
-static void port_fwd_1(struct module *m, const struct event *e)
-{
+static void port_fwd_1(struct module *m, const struct event *e) {
 	event_out(m, 1, e);
 }
 
-static void port_fwd_2(struct module *m, const struct event *e)
-{
+static void port_fwd_2(struct module *m, const struct event *e) {
 	event_out(m, 2, e);
 }
 
-static void port_fwd_3(struct module *m, const struct event *e)
-{
+static void port_fwd_3(struct module *m, const struct event *e) {
 	event_out(m, 3, e);
 }
 
-static void port_fwd_4(struct module *m, const struct event *e)
-{
+static void port_fwd_4(struct module *m, const struct event *e) {
 	event_out(m, 4, e);
 }
 
-static void port_fwd_5(struct module *m, const struct event *e)
-{
+static void port_fwd_5(struct module *m, const struct event *e) {
 	event_out(m, 5, e);
 }
 
-static void port_fwd_6(struct module *m, const struct event *e)
-{
+static void port_fwd_6(struct module *m, const struct event *e) {
 	event_out(m, 6, e);
 }
 
-static void port_fwd_7(struct module *m, const struct event *e)
-{
+static void port_fwd_7(struct module *m, const struct event *e) {
 	event_out(m, 7, e);
 }
 
@@ -172,8 +145,7 @@ static port_func port_fwd[NUM_PORT_FWD] = {
  */
 
 /* port_add_dst adds a destination port to the output */
-void port_add_dst(struct module *m, int idx, struct module *dst, port_func func)
-{
+void port_add_dst(struct module *m, int idx, struct module *dst, port_func func) {
 	/* allocate the output destination */
 	struct output_dst *x = ggm_calloc(1, sizeof(struct output_dst));
 
@@ -195,8 +167,7 @@ void port_add_dst(struct module *m, int idx, struct module *dst, port_func func)
 }
 
 /* port_free_dst_list frees a list of output destination elements */
-void port_free_dst_list(struct output_dst *ptr)
-{
+void port_free_dst_list(struct output_dst *ptr) {
 	while (ptr != NULL) {
 		struct output_dst *next = ptr->next;
 		ggm_free(ptr);
@@ -209,12 +180,11 @@ void port_free_dst_list(struct output_dst *ptr)
  */
 
 /* port_connect connects an output port to an input port */
-void port_connect(struct module *s, const char *sname, struct module *d, const char *dname)
-{
+void port_connect(struct module *s, const char *sname, struct module *d, const char *dname) {
 	const struct module_info *si = s->info;
 	const struct module_info *di = d->info;
 
-	LOG_INF("%s:%s to %s:%s", s->name, sname,  d->name, dname);
+	LOG_INF("%s:%s to %s:%s", s->name, sname, d->name, dname);
 
 	/* does the output port exist on the source module? */
 	int s_idx = port_get_index(si->out, sname);
@@ -255,12 +225,11 @@ void port_connect(struct module *s, const char *sname, struct module *d, const c
 }
 
 /* port_forward connects an output port to an output port for event forwarding */
-void port_forward(struct module *s, const char *sname, struct module *d, const char *dname)
-{
+void port_forward(struct module *s, const char *sname, struct module *d, const char *dname) {
 	const struct module_info *si = s->info;
 	const struct module_info *di = d->info;
 
-	LOG_INF("%s:%s to %s:%s", s->name, sname,  d->name, dname);
+	LOG_INF("%s:%s to %s:%s", s->name, sname, d->name, dname);
 
 	/* does the output port exist on the source module? */
 	int s_idx = port_get_index(si->out, sname);

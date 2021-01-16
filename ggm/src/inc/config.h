@@ -18,8 +18,8 @@
  */
 
 struct synth_cfg {
-	const char *path;       /* path name to module or module:port */
-	const void *cfg;        /* pointer to item config structure */
+	const char *path;	/* path name to module or module:port */
+	const void *cfg;	/* pointer to item config structure */
 };
 
 #define SYNTH_CFG_EOL { NULL, NULL }
@@ -30,18 +30,18 @@ struct synth_cfg {
 
 /* port_float_cfg defines the configuration for a port with float events */
 struct port_float_cfg {
-	float init;     /* initial value */
-	int id;         /* MIDI channel/cc id */
+	float init;		/* initial value */
+	int id;			/* MIDI channel/cc id */
 };
 
 struct port_int_cfg {
-	int init;       /* initial value */
-	int id;         /* MIDI channel/cc id */
+	int init;		/* initial value */
+	int id;			/* MIDI channel/cc id */
 };
 
 struct port_bool_cfg {
-	bool init;      /* initial value */
-	int id;         /* MIDI channel/cc id */
+	bool init;		/* initial value */
+	int id;			/* MIDI channel/cc id */
 };
 
 /* MIDI_CC encodes the MIDI channel and CC number as an integer.
@@ -53,6 +53,6 @@ struct port_bool_cfg {
 
 /*****************************************************************************/
 
-#endif /* GGM_SRC_INC_CONFIG_H */
+#endif				/* GGM_SRC_INC_CONFIG_H */
 
 /*****************************************************************************/

@@ -15,8 +15,7 @@
  * ggm_mdelay delays for a specified number of milliseconds
  */
 
-void ggm_mdelay(long ms)
-{
+void ggm_mdelay(long ms) {
 	struct timespec req, rem;
 
 	if (ms > 999) {
@@ -34,13 +33,11 @@ void ggm_mdelay(long ms)
  * memory allocation.
  */
 
-void *ggm_calloc(size_t num, size_t size)
-{
+void *ggm_calloc(size_t num, size_t size) {
 	return calloc(num, size);
 }
 
-void ggm_free(void *ptr)
-{
+void ggm_free(void *ptr) {
 	return free(ptr);
 }
 

@@ -21,25 +21,24 @@
 
 struct svf {
 
-	int type;       /* filter type */
+	int type;		/* filter type */
 	/* SVF_TYPE_HC */
-	float kf;       /* constant for cutoff frequency */
-	float kq;       /* constant for filter resonance */
-	float bp;       /* bandpass state variable */
-	float lp;       /* low pass state variable */
+	float kf;		/* constant for cutoff frequency */
+	float kq;		/* constant for filter resonance */
+	float bp;		/* bandpass state variable */
+	float lp;		/* low pass state variable */
 	/* SVF_TYPE_TRAPEZOIDAL */
-	float g;        /* constant for cutoff frequency */
-	float k;        /* constant for filter resonance */
-	float ic1eq;    /* state variable */
-	float ic2eq;    /*state variable */
+	float g;		/* constant for cutoff frequency */
+	float k;		/* constant for filter resonance */
+	float ic1eq;		/* state variable */
+	float ic2eq;		/*state variable */
 };
 
 /******************************************************************************
  * svf functions
  */
 
-static void svf_filter_hc(struct module *m, float *in, float *out)
-{
+static void svf_filter_hc(struct module *m, float *in, float *out) {
 	struct svf *this = (struct svf *)m->priv;
 	float lp = this->lp;
 	float bp = this->bp;
@@ -58,8 +57,7 @@ static void svf_filter_hc(struct module *m, float *in, float *out)
 	this->bp = bp;
 }
 
-static void svf_filter_trapezoidal(struct module *m, float *in,  float *out)
-{
+static void svf_filter_trapezoidal(struct module *m, float *in, float *out) {
 	struct svf *this = (struct svf *)m->priv;
 	float ic1eq = this->ic1eq;
 	float ic2eq = this->ic2eq;
@@ -74,7 +72,7 @@ static void svf_filter_trapezoidal(struct module *m, float *in,  float *out)
 		float v2 = ic2eq + (a2 * ic1eq) + (a3 * v3);
 		ic1eq = (2.f * v1) - ic1eq;
 		ic2eq = (2.f * v2) - ic2eq;
-		out[i] = v2; // low
+		out[i] = v2;	// low
 		// low := v2
 		// band := v1
 		// high := v0 - (this->k * v1) - v2
@@ -91,8 +89,7 @@ static void svf_filter_trapezoidal(struct module *m, float *in,  float *out)
  * module port functions
  */
 
-static void svf_port_cutoff(struct module *m, const struct event *e)
-{
+static void svf_port_cutoff(struct module *m, const struct event *e) {
 	struct svf *this = (struct svf *)m->priv;
 	float cutoff = clampf(event_get_float(e), 0.f, 0.5f * AudioSampleFrequency);
 
@@ -110,8 +107,7 @@ static void svf_port_cutoff(struct module *m, const struct event *e)
 	}
 }
 
-static void svf_port_resonance(struct module *m, const struct event *e)
-{
+static void svf_port_resonance(struct module *m, const struct event *e) {
 	struct svf *this = (struct svf *)m->priv;
 	float resonance = clampf(event_get_float(e), 0.f, 1.f);
 
@@ -133,8 +129,7 @@ static void svf_port_resonance(struct module *m, const struct event *e)
  * module functions
  */
 
-static int svf_alloc(struct module *m, va_list vargs)
-{
+static int svf_alloc(struct module *m, va_list vargs) {
 	/* allocate the private data */
 	struct svf *this = ggm_calloc(1, sizeof(struct svf));
 
@@ -152,20 +147,18 @@ static int svf_alloc(struct module *m, va_list vargs)
 
 	return 0;
 
-error:
+ error:
 	ggm_free(this);
 	return -1;
 }
 
-static void svf_free(struct module *m)
-{
+static void svf_free(struct module *m) {
 	struct svf *this = (struct svf *)m->priv;
 
 	ggm_free(this);
 }
 
-static bool svf_process(struct module *m, float *bufs[])
-{
+static bool svf_process(struct module *m, float *bufs[]) {
 	struct svf *this = (struct svf *)m->priv;
 	float *in = bufs[0];
 	float *out = bufs[1];
@@ -189,14 +182,14 @@ static bool svf_process(struct module *m, float *bufs[])
  */
 
 static const struct port_info in_ports[] = {
-	{ .name = "in", .type = PORT_TYPE_AUDIO, },
-	{ .name = "cutoff", .type = PORT_TYPE_FLOAT, .pf = svf_port_cutoff },
-	{ .name = "resonance", .type = PORT_TYPE_FLOAT, .pf = svf_port_resonance },
+	{.name = "in",.type = PORT_TYPE_AUDIO,},
+	{.name = "cutoff",.type = PORT_TYPE_FLOAT,.pf = svf_port_cutoff},
+	{.name = "resonance",.type = PORT_TYPE_FLOAT,.pf = svf_port_resonance},
 	PORT_EOL,
 };
 
 static const struct port_info out_ports[] = {
-	{ .name = "out", .type = PORT_TYPE_AUDIO, },
+	{.name = "out",.type = PORT_TYPE_AUDIO,},
 	PORT_EOL,
 };
 

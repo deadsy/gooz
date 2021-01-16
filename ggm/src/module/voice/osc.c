@@ -17,10 +17,10 @@
  */
 
 struct osc {
-	struct module *adsr;    /* adsr envelope */
-	struct module *osc;     /* oscillator */
-	port_func gate;         /* port function cache */
-	port_func freq;         /* port function cache */
+	struct module *adsr;	/* adsr envelope */
+	struct module *osc;	/* oscillator */
+	port_func gate;		/* port function cache */
+	port_func freq;		/* port function cache */
 };
 
 /******************************************************************************
@@ -28,8 +28,7 @@ struct osc {
  */
 
 /* osc_port_reset resets the voice state */
-static void osc_port_reset(struct module *m, const struct event *e)
-{
+static void osc_port_reset(struct module *m, const struct event *e) {
 	struct osc *this = (struct osc *)m->priv;
 
 	/* forward the reset to the sub-modules */
@@ -38,16 +37,14 @@ static void osc_port_reset(struct module *m, const struct event *e)
 }
 
 /* osc_port_gate is the voice gate event */
-static void osc_port_gate(struct module *m, const struct event *e)
-{
+static void osc_port_gate(struct module *m, const struct event *e) {
 	struct osc *this = (struct osc *)m->priv;
 
 	event_in(this->adsr, "gate", e, &this->gate);
 }
 
 /* osc_port_note is the pitch bent MIDI note (float) used to set the voice frequency */
-static void osc_port_note(struct module *m, const struct event *e)
-{
+static void osc_port_note(struct module *m, const struct event *e) {
 	struct osc *this = (struct osc *)m->priv;
 	float f = midi_to_frequency(event_get_float(e));
 
@@ -58,8 +55,7 @@ static void osc_port_note(struct module *m, const struct event *e)
  * module functions
  */
 
-static int osc_alloc(struct module *m, va_list vargs)
-{
+static int osc_alloc(struct module *m, va_list vargs) {
 	struct module *osc = NULL;
 	struct module *adsr = NULL;
 
@@ -88,15 +84,14 @@ static int osc_alloc(struct module *m, va_list vargs)
 
 	return 0;
 
-error:
+ error:
 	module_del(osc);
 	module_del(adsr);
 	ggm_free(m->priv);
 	return -1;
 }
 
-static void osc_free(struct module *m)
-{
+static void osc_free(struct module *m) {
 	struct osc *this = (struct osc *)m->priv;
 
 	module_del(this->osc);
@@ -104,17 +99,16 @@ static void osc_free(struct module *m)
 	ggm_free(this);
 }
 
-static bool osc_process(struct module *m, float *buf[])
-{
+static bool osc_process(struct module *m, float *buf[]) {
 	struct osc *this = (struct osc *)m->priv;
 	struct module *adsr = this->adsr;
 	float env[AudioBufferSize];
-	bool active = adsr->info->process(adsr, (float *[]){ env, });
+	bool active = adsr->info->process(adsr, (float *[]) { env, });
 
 	if (active) {
 		struct module *osc = this->osc;
 		float *out = buf[0];
-		osc->info->process(osc, (float *[]){ out, });
+		osc->info->process(osc, (float *[]) { out, });
 		block_mul(out, env);
 	}
 
@@ -126,14 +120,14 @@ static bool osc_process(struct module *m, float *buf[])
  */
 
 static const struct port_info in_ports[] = {
-	{ .name = "reset", .type = PORT_TYPE_BOOL, .pf = osc_port_reset },
-	{ .name = "gate", .type = PORT_TYPE_FLOAT, .pf = osc_port_gate },
-	{ .name = "note", .type = PORT_TYPE_FLOAT, .pf = osc_port_note },
+	{.name = "reset",.type = PORT_TYPE_BOOL,.pf = osc_port_reset},
+	{.name = "gate",.type = PORT_TYPE_FLOAT,.pf = osc_port_gate},
+	{.name = "note",.type = PORT_TYPE_FLOAT,.pf = osc_port_note},
 	PORT_EOL,
 };
 
 static const struct port_info out_ports[] = {
-	{ .name = "out", .type = PORT_TYPE_AUDIO, },
+	{.name = "out",.type = PORT_TYPE_AUDIO,},
 	PORT_EOL,
 };
 
