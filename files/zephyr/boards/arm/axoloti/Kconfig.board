@@ -1,0 +1,6 @@
+#  Copyright (c) 2021 Jason T. Harris
+#  SPDX-License-Identifier: Apache-2.0
+
+config BOARD_AXOLOTI
+	bool "Axoloti Core (STM32F427)"
+	depends on SOC_STM32F427XX

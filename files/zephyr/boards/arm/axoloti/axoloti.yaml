@@ -1,0 +1,20 @@
+# Copyright (c) 2021 Jason T. Harris
+# SPDX-License-Identifier: Apache-2.0
+
+identifier: axoloti
+name: Axoloti Core
+type: mcu
+arch: arm
+toolchain:
+  - zephyr
+  - gnuarmemb
+  - xtools
+supported:
+  - gpio
+  - pwm
+  - i2c
+  - spi
+  - usb_device
+  - adc
+ram: 256
+flash: 2048
