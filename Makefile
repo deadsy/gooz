@@ -1,3 +1,4 @@
+VERSION = "0.0.1"
 
 CURRENT_DIR = $(shell pwd)
 
@@ -80,11 +81,11 @@ all: .stamp_output
 
 .stamp_output: .stamp_xtools .stamp_build
 	mkdir -p $(OUTPUT_DIR)
+	cp $(GGM_BUILD)/zephyr/zephyr.* $(OUTPUT_DIR)
 	touch $@
 
 .stamp_build: .stamp_cmake
 	ninja -C $(GGM_BUILD)
-	#ninja -C $(MCUBOOT_BUILD)
 	touch $@
 
 .stamp_cmake: .stamp_src
@@ -93,7 +94,7 @@ all: .stamp_output
 	ZEPHYR_BASE=$(ZEPHYR_BASE) \
 	ZEPHYR_TOOLCHAIN_VARIANT=$(ZEPHYR_TOOLCHAIN_VARIANT) \
 	CROSS_COMPILE=$(CROSS_COMPILE) \
-	cmake -GNinja -DZEPHYR_MODULES=$(ZEPHYR_MODULES) -DBOARD=$(BOARD) -S $(GGM_APP) -B $(GGM_BUILD)
+	cmake -GNinja -DZEPHYR_MODULES=$(ZEPHYR_MODULES) -DBOARD=$(BOARD) -DBUILD_VERSION=$(VERSION) -S $(GGM_APP) -B $(GGM_BUILD)
 	touch $@
 
 .PHONY: ggm_config

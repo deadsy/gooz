@@ -30,7 +30,7 @@ LOG_MODULE_DECLARE(LOG_MODULE_NAME);
 
 static inline void ggm_mdelay(long ms)
 {
-	k_sleep(ms);
+	k_sleep(K_MSEC(ms));
 }
 
 static inline void *ggm_calloc(size_t num, size_t size)
