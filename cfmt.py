@@ -22,6 +22,7 @@ src_dirs = (
   'ggm/src/module/voice',
   'ggm/src/os/linux',
   'ggm/src/os/zephyr',
+  'files/zephyr/drivers/audio',
 )
 
 src_filter_out = (

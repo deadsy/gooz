@@ -1,0 +1,13 @@
+# Copyright (c) 2021, Jason T. Harris
+# SPDX-License-Identifier: Apache-2.0
+
+description: Cirrus Logic CS43L22 Audio DAC
+
+compatible: "cirrus,cs43l22"
+
+include: i2c-device.yaml
+
+properties:
+    reset-gpios:
+      type: phandle-array
+      required: true

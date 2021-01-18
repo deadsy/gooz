@@ -1,0 +1,41 @@
+--- ./src/zephyr/drivers/audio/Kconfig	2021-01-18 12:57:38.339032715 -0800
++++ ./src/zephyr/drivers/audio/Kconfig	2021-01-18 12:58:06.646030027 -0800
+@@ -30,6 +30,7 @@
+ source "subsys/logging/Kconfig.template.log_config"
+ 
+ source "drivers/audio/Kconfig.tlv320dac"
++source "drivers/audio/Kconfig.cs43l22"
+ 
+ endif # AUDIO_CODEC
+ 
+--- ./src/zephyr/drivers/audio/CMakeLists.txt	2021-01-18 12:58:55.360401049 -0800
++++ ./src/zephyr/drivers/audio/CMakeLists.txt	2021-01-18 12:59:25.395453534 -0800
+@@ -3,6 +3,7 @@
+ zephyr_library()
+ 
+ zephyr_library_sources_ifdef(CONFIG_AUDIO_TLV320DAC	tlv320dac310x.c)
++zephyr_library_sources_ifdef(CONFIG_AUDIO_CS43L22	cs43l22.c)
+ zephyr_library_sources_ifdef(CONFIG_AUDIO_INTEL_DMIC	intel_dmic.c)
+ zephyr_library_sources_ifdef(CONFIG_AUDIO_INTEL_DMIC	decimation/pdm_decim_int32_02_4288_5100_010_095.c)
+ zephyr_library_sources_ifdef(CONFIG_AUDIO_INTEL_DMIC	decimation/pdm_decim_int32_02_4375_5100_010_095.c)
+--- ./src/zephyr/boards/arm/stm32f4_disco/stm32f4_disco.dts	2020-09-27 13:15:49.000000000 -0700
++++ ./src/zephyr/boards/arm/stm32f4_disco/stm32f4_disco.dts	2021-01-18 14:29:55.565991157 -0800
+@@ -57,6 +57,18 @@
+ 	};
+ };
+ 
++&i2c1 {
++	status = "okay";
++	clock-frequency = <I2C_BITRATE_FAST>;
++
++	codec0: cs43l22@94 {
++		compatible = "cirrus,cs43l22";
++		reg = <0x94>;
++		label = "CS43L22";
++		reset-gpios = <&gpioa 4 GPIO_ACTIVE_LOW>;
++	};
++};
++
+ &usart1 {
+ 	current-speed = <115200>;
+ 	status = "okay";
