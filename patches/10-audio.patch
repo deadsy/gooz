@@ -18,21 +18,50 @@
  zephyr_library_sources_ifdef(CONFIG_AUDIO_INTEL_DMIC	intel_dmic.c)
  zephyr_library_sources_ifdef(CONFIG_AUDIO_INTEL_DMIC	decimation/pdm_decim_int32_02_4288_5100_010_095.c)
  zephyr_library_sources_ifdef(CONFIG_AUDIO_INTEL_DMIC	decimation/pdm_decim_int32_02_4375_5100_010_095.c)
+--- ./src/zephyr/include/audio/codec.h	2020-09-27 13:15:49.000000000 -0700
++++ ./src/zephyr/include/audio/codec.h	2021-01-19 09:59:08.837085013 -0800
+@@ -81,6 +81,14 @@
+ 	AUDIO_CHANNEL_REAR_CENTER,
+ 	AUDIO_CHANNEL_SIDE_LEFT,
+ 	AUDIO_CHANNEL_SIDE_RIGHT,
++	AUDIO_CHANNEL_MASTER_LEFT,
++	AUDIO_CHANNEL_MASTER_RIGHT,
++	AUDIO_CHANNEL_HEADPHONE_LEFT,
++	AUDIO_CHANNEL_HEADPHONE_RIGHT,
++	AUDIO_CHANNEL_SPEAKER_LEFT,
++	AUDIO_CHANNEL_SPEAKER_RIGHT,
++	AUDIO_CHANNEL_PCM_LEFT,
++	AUDIO_CHANNEL_PCM_RIGHT,
+ 	AUDIO_CHANNEL_ALL,
+ } audio_channel_t;
+ 
+--- ./src/zephyr/boards/arm/stm32f4_disco/pinmux.c	2021-01-19 17:23:54.311149048 -0800
++++ ./src/zephyr/boards/arm/stm32f4_disco/pinmux.c	2021-01-19 17:26:22.741841323 -0800
+@@ -37,6 +37,10 @@
+ 	{STM32_PIN_PB5, STM32F4_PINMUX_FUNC_PB5_CAN2_RX},
+ 	{STM32_PIN_PB13, STM32F4_PINMUX_FUNC_PB13_CAN2_TX},
+ #endif
++#if DT_NODE_HAS_STATUS(DT_NODELABEL(i2c1), okay) && CONFIG_I2C
++	{STM32_PIN_PB6, STM32F4_PINMUX_FUNC_PB6_I2C1_SCL},
++	{STM32_PIN_PB9, STM32F4_PINMUX_FUNC_PB9_I2C1_SDA},
++#endif
+ };
+ 
+ static int pinmux_stm32_init(const struct device *port)
 --- ./src/zephyr/boards/arm/stm32f4_disco/stm32f4_disco.dts	2020-09-27 13:15:49.000000000 -0700
-+++ ./src/zephyr/boards/arm/stm32f4_disco/stm32f4_disco.dts	2021-01-18 14:29:55.565991157 -0800
-@@ -57,6 +57,18 @@
++++ ./src/zephyr/boards/arm/stm32f4_disco/stm32f4_disco.dts	2021-01-19 22:42:01.475959434 -0800
+@@ -57,6 +57,17 @@
  	};
  };
  
 +&i2c1 {
 +	status = "okay";
-+	clock-frequency = <I2C_BITRATE_FAST>;
-+
-+	codec0: cs43l22@94 {
++	clock-frequency = <I2C_BITRATE_STANDARD>;
++	codec0: cs43l22@4a {
 +		compatible = "cirrus,cs43l22";
-+		reg = <0x94>;
++		reg = <0x4a>;
 +		label = "CS43L22";
-+		reset-gpios = <&gpioa 4 GPIO_ACTIVE_LOW>;
++		reset-gpios = <&gpiod 4 0>;
 +	};
 +};
 +
