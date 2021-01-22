@@ -15,6 +15,10 @@
 
 //-----------------------------------------------------------------------------
 
+static struct audio_drv ggm_audio;
+
+//-----------------------------------------------------------------------------
+
 static void midi_out(void *arg, const struct event *e, int idx) {
 	uint8_t status = e->u.midi.status;
 	uint8_t arg0 = e->u.midi.arg0;
